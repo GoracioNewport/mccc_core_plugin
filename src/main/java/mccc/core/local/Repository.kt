@@ -8,7 +8,7 @@ import mccc.core.local.data.User
 
 final class Repository {
 
-    private var games: Environment = Environments.newInstance("/local/data/.Games")
+    private var games: Environment = Environments.newInstance("/local/data/.Games") // Our servers will be running linux, so ideally this path should be changed to something that linux systems can handle
 
 
 }
