@@ -1,6 +1,6 @@
 package mccc.core.api;
 
-public class scoreManager {
+public class ScoreManager {
 
 
 

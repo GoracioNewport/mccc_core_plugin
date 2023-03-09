@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-public class playerManager {
+public class PlayerManager {
 
   public void setGlobalGamemode(GameMode gamemode) {
 
