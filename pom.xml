@@ -74,7 +74,7 @@
                         <phase>test-compile</phase>
                         <goals> <goal>testCompile</goal> </goals>
                     </execution>
-                </executions>
+                </executions><configuration><source>11</source><target>11</target></configuration>
             </plugin>
         </plugins>
         <resources>
