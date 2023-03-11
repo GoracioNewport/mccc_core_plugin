@@ -13,7 +13,7 @@ public final class Core extends JavaPlugin {
 
     // Plugin startup logic
     System.out.println("MCCC Core plugin started");
-    new Fallback().pull_from_config();
+    new Fallback().fetch_from_config();
   }
 
   @Override
