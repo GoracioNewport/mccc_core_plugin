@@ -1,5 +1,6 @@
 package mccc.core.local;
 
+import mccc.core.Core;
 import mccc.core.local.data.Team;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class Repository {
 
-  private LinkedHashMap<String, Team> teams;
+  public LinkedHashMap<String, Team> teams;
   private Fallback fallback = new Fallback();
 
   private List<Team> fetch_from_database() {
@@ -21,14 +22,6 @@ public class Repository {
     return false;
   }
 
-  public void set_teams(LinkedHashMap<String, Team> data) {
-    teams = data;
-  }
-
-  public LinkedHashMap<String, Team> get_teams() {
-    return teams;
-  }
-
   public void fetch() {
 
     List<Team> data;
@@ -36,41 +29,48 @@ public class Repository {
     data = fetch_from_database();
 
     if (data != null) {
-      set_teams(list_to_map(data));
-      System.out.println("Configuration successfully fetched from database");
+      teams = list_to_map(data);
+      plugin.getLogger().info("Configuration successfully fetched from database");
       return;
     }
 
-    System.out.println("Database configuration fetch failed");
+    plugin.getLogger().warning("Database configuration fetch failed");
 
     data = fallback.fetch_from_config();
 
     if (data != null) {
-      set_teams(list_to_map(data));
-      System.out.println("Configuration fallback fetch system operational");
+      teams = list_to_map(data);
+      plugin.getLogger().info("Configuration fallback fetch system operational");
       return;
     }
 
-    System.out.println("Fallback configuration fetch failed");
-    System.out.println("CRITICAL: UNABLE TO LOAD CONFIGURATION");
+    plugin.getLogger().warning("Fallback configuration fetch failed");
+    plugin.getLogger().warning("CRITICAL: UNABLE TO LOAD CONFIGURATION");
   }
 
   public void write() {
 
-    if (write_to_database(map_to_list(get_teams()))) {
-      System.out.println("Configuration successfully written to database");
+    boolean saved = false;
+    if (write_to_database(map_to_list(teams))) {
+      plugin.getLogger().info("Configuration successfully written to database");
+      saved = true;
     }
 
-    System.out.println("Database configuration write failed");
+    else
+      plugin.getLogger().warning("Database configuration write failed");
 
 
-    if (fallback.write_to_config(map_to_list(get_teams()))) {
-      System.out.println("Configuration fallback write system operational");
-      return;
+    if (fallback.write_to_config(map_to_list(teams))) {
+      plugin.getLogger().info("Configuration fallback write system operational");
+      saved = true;
     }
 
-    System.out.println("Fallback configuration write failed");
-    System.out.println("CRITICAL: UNABLE TO SAVE CONFIGURATION");
+    else
+      plugin.getLogger().warning("Fallback configuration write failed");
+
+
+    if (!saved)
+      plugin.getLogger().warning("CRITICAL: UNABLE TO SAVE CONFIGURATION");
   }
 
   private LinkedHashMap<String, Team> list_to_map(List<Team> list) {
@@ -92,6 +92,11 @@ public class Repository {
 
 
     return return_value;
+  }
+
+  private Core plugin;
+  public Repository(Core plugin_) {
+    plugin = plugin_;
   }
 
 }
