@@ -4,3 +4,7 @@ main: mccc.core.Core
 api-version: 1.19
 authors: [ GoracioNewport ]
 description: Core plugin for basic functions handling
+depend: [ PlaceholderAPI ]
+commands:
+  test:
+    description: Test
