@@ -14,18 +14,18 @@ import java.util.List;
 
 public class Fallback {
 
-  final private String config_path = "./config/core.yaml";
+  final private String config_path = "./config/core.yml";
 
-  public List<Team> fetch_from_config() {
+  public ArrayList<Team> fetch_from_config() {
     try {
       YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path));
 
-      List<Team> return_value = new ArrayList<>();
+      ArrayList<Team> return_value = new ArrayList<>();
 
       for (Object team_raw : configuration.getList("teams")) {
         LinkedHashMap<String, Object> team = (LinkedHashMap<String, Object>) team_raw;
 
-        List<Player> team_players = new ArrayList<>();
+        ArrayList<Player> team_players = new ArrayList<>();
 
         for (Object player_raw : (List<Object>) team.get("players")) {
           LinkedHashMap<String, Object> player = (LinkedHashMap<String, Object>) player_raw;
@@ -33,7 +33,7 @@ public class Fallback {
           team_players.add(new Player((String)player.get("nickname"), (Integer)player.get("score")));
         }
 
-        return_value.add(new Team((String)team.get("name"), (Integer)team.get("score"), team_players));
+        return_value.add(new Team((String)team.get("name"), (String)team.get("color"), (Integer)team.get("score"), team_players));
       }
 
       return return_value;

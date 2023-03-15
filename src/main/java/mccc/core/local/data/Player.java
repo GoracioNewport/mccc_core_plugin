@@ -8,6 +8,11 @@ public class Player {
     nickname = nickname_;
     score = score_;
   }
+
+  public Player() {
+    nickname = "Fake Player";
+    score = 0;
+  }
 }
 
 
