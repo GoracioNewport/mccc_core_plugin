@@ -85,6 +85,7 @@ public class TeamManager {
   public void request_team_sorting() {
     sorted_team_list = new ArrayList<>(get_teams().values());
     sorted_team_list.sort(Comparator.comparing(t -> t.score));
+    Collections.reverse(sorted_team_list);
   }
 
   public HashMap<Player, Team> player_to_team;

@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,11 +15,12 @@ import java.util.List;
 
 public class Fallback {
 
-  final private String config_path = "./config/core.yml";
+  final private String config_path = "./config/";
+  final private String config_name = "core.yml";
 
   public ArrayList<Team> fetch_from_config() {
     try {
-      YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path));
+      YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path + config_name));
 
       ArrayList<Team> return_value = new ArrayList<>();
 
@@ -48,16 +50,19 @@ public class Fallback {
 
   public boolean write_to_config(List<Team> data) {
     try {
-      YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path));
+      YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path + config_name));
+      configuration.save(new File(config_path + "backup/old_" + System.currentTimeMillis() + config_name));
+
       configuration.set("teams", data);
 
-      configuration.save(new File(config_path));
+      configuration.save(new File(config_path + config_name));
       
       // A dirty workaround, but this works so...
 
-      String content = Files.readString(Paths.get(config_path));
+      Path path = Paths.get(config_path + config_name);
+      String content = Files.readString(path);
       content = content.replace(" !!mccc.core.local.data.Team", "");
-      Files.writeString(Paths.get(config_path), content, StandardCharsets.UTF_8);
+      Files.writeString(path, content, StandardCharsets.UTF_8);
 
       return true;
     }
