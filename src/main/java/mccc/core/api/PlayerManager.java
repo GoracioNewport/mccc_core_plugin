@@ -10,7 +10,7 @@ public class PlayerManager {
   public void setGlobalGamemode(GameMode gamemode) {
 
     for (Player player : Bukkit.getOnlinePlayers())
-      if (!player.hasPermission("op"))
+      if (!player.hasPermission("admin"))
         player.setGameMode(gamemode);
 
   }

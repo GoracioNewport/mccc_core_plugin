@@ -16,3 +16,5 @@ team_colors:
   - §8
   - §0
 scoreboard_width: 64
+service_groups:
+  - admin

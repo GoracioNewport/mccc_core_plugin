@@ -1,5 +1,6 @@
 package mccc.core.local;
 
+import mccc.core.local.data.Database;
 import mccc.core.local.data.Player;
 import mccc.core.local.data.Team;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,11 +19,13 @@ public class Fallback {
   final private String config_path = "./config/";
   final private String config_name = "core.yml";
 
-  public ArrayList<Team> fetch_from_config() {
+  final private Converter converter = new Converter();
+
+  public Database fetch_from_config() {
     try {
       YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path + config_name));
 
-      ArrayList<Team> return_value = new ArrayList<>();
+      ArrayList<Team> teams = new ArrayList<>();
 
       for (Object team_raw : configuration.getList("teams")) {
         LinkedHashMap<String, Object> team = (LinkedHashMap<String, Object>) team_raw;
@@ -35,11 +38,10 @@ public class Fallback {
           team_players.add(new Player((String)player.get("nickname"), (Integer)player.get("score")));
         }
 
-        return_value.add(new Team((String)team.get("name"), (String)team.get("color"), (Integer)team.get("score"), team_players));
+        teams.add(new Team((String)team.get("name"), (String)team.get("color"), (Integer)team.get("score"), team_players));
       }
 
-      return return_value;
-
+      return new Database(converter.list_to_map(teams), configuration.getDouble("multiplier"));
     }
 
     catch (Exception e) {
@@ -48,12 +50,13 @@ public class Fallback {
     }
   }
 
-  public boolean write_to_config(List<Team> data) {
+  public boolean write_to_config(Database data) {
     try {
       YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path + config_name));
       configuration.save(new File(config_path + "backup/old_" + System.currentTimeMillis() + config_name));
 
-      configuration.set("teams", data);
+      configuration.set("teams", converter.map_to_list(data.teams));
+      configuration.set("multiplier", data.multiplier);
 
       configuration.save(new File(config_path + config_name));
       

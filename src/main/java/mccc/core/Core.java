@@ -1,12 +1,12 @@
 package mccc.core;
 
-import mccc.core.commands.Testing;
+import mccc.core.commands.AdminCommands;
+import mccc.core.listeners.PlayerListener;
 import mccc.core.local.Repository;
 import mccc.core.placeholders.CoreExpansion;
-import net.luckperms.api.LuckPerms;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Objects;
 
 public final class Core extends JavaPlugin {
 
@@ -14,14 +14,19 @@ public final class Core extends JavaPlugin {
   public ApiManager apiManager;
 
   public CoreExpansion placeholderManager;
-  public LuckPerms permissionManager;
+  public PermissionManager permissionManager;
 
   @Override
   public void onEnable() {
 
     // Plugin startup logic
     getLogger().info("MCCC Core plugin started");
-    getCommand("test").setExecutor(new Testing(this));
+
+    // Commands registration
+    if (getCommand("core") == null)
+      getLogger().warning("Unable to register commands");
+    else
+      Objects.requireNonNull(getCommand("core")).setExecutor(new AdminCommands(this));
 
     // Default core configuration
     saveDefaultConfig();
@@ -31,9 +36,7 @@ public final class Core extends JavaPlugin {
     repository.fetch();
 
     // LuckPerms initialization
-    RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-    if (provider != null)
-      permissionManager = provider.getProvider();
+    permissionManager = new PermissionManager(this);
 
 
     // API initialization
@@ -44,11 +47,14 @@ public final class Core extends JavaPlugin {
     placeholderManager = new CoreExpansion(this);
     placeholderManager.register();
 
+    // Listeners initialization
+    getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+
   }
 
   @Override
   public void onDisable() {
     // Plugin shutdown logic
-    repository.write();
+    // repository.write();
   }
 }

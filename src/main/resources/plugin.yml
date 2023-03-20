@@ -1,10 +1,10 @@
 name: Core
 version: '${project.version}'
 main: mccc.core.Core
-api-version: 1.19
+api-version: 1.18
 authors: [ GoracioNewport ]
 description: Core plugin for basic functions handling
-depend: [ PlaceholderAPI ]
+depend: [ PlaceholderAPI, LuckPerms ]
 commands:
-  test:
-    description: Test
+  core:
+    description: Admin tool for managing MCCC core
