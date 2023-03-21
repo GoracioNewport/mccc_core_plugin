@@ -13,7 +13,40 @@ public class AdminCommands implements CommandExecutor {
 
     if (args.length == 0) {
       // TODO
-      return true;
+      return false;
+    }
+
+    if (args[0].equals("score")) {
+      if (args.length == 1) {
+        // TODO
+        return false;
+      }
+
+      if (args[1].equals("add")) {
+        if (args.length == 2) {
+
+          return false;
+        }
+
+        if (args[2].equals("player") || args[2].equals("team")) {
+          if (args.length < 5) {
+
+            return false;
+          }
+
+          String entity_name = args[3];
+          int amount = Integer.parseInt(args[4]);
+          String message = null;
+
+          if (args.length == 6)
+            message = args[5];
+
+          if (args[2].equals("player"))
+            plugin.apiManager.scoreManager.add_score(plugin.apiManager.playerManager.get_player_object(entity_name), amount, message);
+          else
+            plugin.apiManager.scoreManager.add_score(plugin.apiManager.teamManager.get_team(entity_name), amount, message, null);
+        }
+      }
     }
 
     if (args[0].equals("permissions")) {
@@ -44,7 +77,7 @@ public class AdminCommands implements CommandExecutor {
     if (args[0].equals("database")) {
       if (args.length == 1) {
         // TODO
-        return true;
+        return false;
       }
 
       if (args[1].equals("fetch")) {
