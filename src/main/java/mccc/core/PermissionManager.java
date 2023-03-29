@@ -42,9 +42,9 @@ public class PermissionManager {
   public void initialize_team_groups() {
     ArrayList <Team> teams = new ArrayList<>(plugin.apiManager.teamManager.get_teams().values());
     for (Team team : teams) {
-      CompletableFuture<Group> reciever =luckPerms.getGroupManager().createAndLoadGroup(team.name);
+      CompletableFuture<Group> receiver =luckPerms.getGroupManager().createAndLoadGroup(team.name);
 
-      reciever.thenApplyAsync(group -> {
+      receiver.thenApplyAsync(group -> {
         PrefixNode prefix_node = PrefixNode.builder("[" + team.color + team.name + ChatColor.RESET + "] ", 101).build();
         group.data().add(prefix_node);
         luckPerms.getGroupManager().saveGroup(group);

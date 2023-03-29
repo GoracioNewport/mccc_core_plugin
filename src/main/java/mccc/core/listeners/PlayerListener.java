@@ -2,8 +2,6 @@ package mccc.core.listeners;
 
 import mccc.core.Core;
 import mccc.core.local.data.Team;
-import net.luckperms.api.model.user.User;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

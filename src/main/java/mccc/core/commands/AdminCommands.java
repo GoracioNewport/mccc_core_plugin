@@ -42,9 +42,9 @@ public class AdminCommands implements CommandExecutor {
             message = args[5];
 
           if (args[2].equals("player"))
-            plugin.apiManager.scoreManager.add_score(plugin.apiManager.playerManager.get_player_object(entity_name), amount, message);
+            plugin.apiManager.scoreManager.add_score(entity_name, amount, message);
           else
-            plugin.apiManager.scoreManager.add_score(plugin.apiManager.teamManager.get_team(entity_name), amount, message, null);
+            plugin.apiManager.scoreManager.add_score(entity_name, amount, message, null);
         }
       }
     }

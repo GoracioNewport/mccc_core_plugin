@@ -6,7 +6,7 @@ import mccc.core.api.TeamManager;
 
 public class ApiManager {
 
-  private Core plugin;
+  private final Core plugin;
   public PlayerManager playerManager;
   public TeamManager teamManager;
   public ScoreManager scoreManager;
