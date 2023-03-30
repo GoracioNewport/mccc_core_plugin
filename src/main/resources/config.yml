@@ -1,5 +1,4 @@
 teamColors:
-  - §4
   - §c
   - §6
   - §e
@@ -7,14 +6,9 @@ teamColors:
   - §a
   - §b
   - §3
-  - §1
   - §9
   - §d
   - §5
-  - §f
-  - §7
-  - §8
-  - §0
 scoreboardWidth: 64
 serviceGroups:
   - admin
