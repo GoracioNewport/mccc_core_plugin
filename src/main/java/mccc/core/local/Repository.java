@@ -9,32 +9,32 @@ public class Repository {
   public Database data;
   private final Fallback fallback = new Fallback();
 
-  private Database fetch_from_database() {
+  private Database fetchFromDatabase() {
     // TODO
     return null;
   }
 
-  private boolean write_to_database(Database data) {
+  private boolean writeToDatabase(Database data) {
     // TODO
     return false;
   }
 
   public void fetch() {
 
-    Database fetched_data = fetch_from_database();
+    Database fetchedData = fetchFromDatabase();
 
-    if (fetched_data != null) {
-      data = fetched_data;
+    if (fetchedData != null) {
+      data = fetchedData;
       plugin.getLogger().info("Configuration successfully fetched from database");
       return;
     }
 
     plugin.getLogger().warning("Database configuration fetch failed");
 
-    fetched_data = fallback.fetch_from_config();
+    fetchedData = fallback.fetchFromConfig();
 
-    if (fetched_data != null) {
-      data = fetched_data;
+    if (fetchedData != null) {
+      data = fetchedData;
       plugin.getLogger().info("Configuration fallback fetch system operational");
       return;
     }
@@ -46,7 +46,7 @@ public class Repository {
   public void write() {
 
     boolean saved = false;
-    if (write_to_database(data)) {
+    if (writeToDatabase(data)) {
       plugin.getLogger().info("Configuration successfully written to database");
       saved = true;
     }

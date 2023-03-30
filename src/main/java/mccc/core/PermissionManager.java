@@ -19,14 +19,14 @@ public class PermissionManager {
   public LuckPerms luckPerms;
   private final Core plugin;
 
-  public void clear_groups() {
+  public void clearGroups() {
     luckPerms.getGroupManager().loadAllGroups();
     ArrayList <Group> groups = new ArrayList<>(luckPerms.getGroupManager().getLoadedGroups());
 
-    ArrayList <String> immune_groups = new ArrayList<>(plugin.getConfig().getStringList("service_groups"));
+    ArrayList <String> immuneGroups = new ArrayList<>(plugin.getConfig().getStringList("serviceGroups"));
 
     for (Group group : groups) {
-      if (immune_groups.contains(group.getName()) || group.getName().equals("default"))
+      if (immuneGroups.contains(group.getName()) || group.getName().equals("default"))
         continue;
 
       try {
@@ -39,14 +39,14 @@ public class PermissionManager {
     }
   }
 
-  public void initialize_team_groups() {
-    ArrayList <Team> teams = new ArrayList<>(plugin.apiManager.teamManager.get_teams().values());
+  public void initializeTeamGroups() {
+    ArrayList <Team> teams = new ArrayList<>(plugin.apiManager.teamManager.getTeams().values());
     for (Team team : teams) {
-      CompletableFuture<Group> receiver =luckPerms.getGroupManager().createAndLoadGroup(team.name);
+      CompletableFuture<Group> receiver = luckPerms.getGroupManager().createAndLoadGroup(team.name);
 
       receiver.thenApplyAsync(group -> {
-        PrefixNode prefix_node = PrefixNode.builder("[" + team.color + team.name + ChatColor.RESET + "] ", 101).build();
-        group.data().add(prefix_node);
+        PrefixNode prefixNode = PrefixNode.builder("[" + team.color + team.name + ChatColor.RESET + "] ", 101).build();
+        group.data().add(prefixNode);
         luckPerms.getGroupManager().saveGroup(group);
 
         return group;
@@ -55,8 +55,8 @@ public class PermissionManager {
 
   }
 
-  public void fill_team_groups() {
-    ArrayList <Team> teams = new ArrayList<>(plugin.apiManager.teamManager.get_teams().values());
+  public void fillTeamGroups() {
+    ArrayList <Team> teams = new ArrayList<>(plugin.apiManager.teamManager.getTeams().values());
 
     for (Team team : teams) {
       Group group = luckPerms.getGroupManager().getGroup(team.name);
@@ -85,9 +85,9 @@ public class PermissionManager {
     }
   }
 
-  public void assign_player_to_team(String player_name) {
+  public void assignPlayerToTeam(String player_name) {
     org.bukkit.entity.Player bukkit_player = Bukkit.getPlayer(player_name);
-    Team team = plugin.apiManager.teamManager.get_team_by_player(player_name);
+    Team team = plugin.apiManager.teamManager.getTeamByPlayer(player_name);
 
     if (bukkit_player == null) {
       plugin.getLogger().warning("Player " + player_name + " was not found, can't assign to team!");

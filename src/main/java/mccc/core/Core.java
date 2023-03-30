@@ -41,7 +41,7 @@ public final class Core extends JavaPlugin {
 
     // API initialization
     apiManager = new ApiManager(this);
-    apiManager.teamManager.assign_colors();
+    apiManager.teamManager.assignColors();
 
     // Placeholders initialization
     placeholderManager = new CoreExpansion(this);

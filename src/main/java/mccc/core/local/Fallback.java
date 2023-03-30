@@ -16,32 +16,32 @@ import java.util.List;
 
 public class Fallback {
 
-  final private String config_path = "./config/";
-  final private String config_name = "core.yml";
+  final private String configPath = "./config/";
+  final private String configName = "core.yml";
 
   final private Converter converter = new Converter();
 
-  public Database fetch_from_config() {
+  public Database fetchFromConfig() {
     try {
-      YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path + config_name));
+      YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(configPath + configName));
 
       ArrayList<Team> teams = new ArrayList<>();
 
-      for (Object team_raw : configuration.getList("teams")) {
-        LinkedHashMap<String, Object> team = (LinkedHashMap<String, Object>) team_raw;
+      for (Object teamRaw : configuration.getList("teams")) {
+        LinkedHashMap<String, Object> team = (LinkedHashMap<String, Object>) teamRaw;
 
-        ArrayList<Player> team_players = new ArrayList<>();
+        ArrayList<Player> teamPlayers = new ArrayList<>();
 
         for (Object player_raw : (List<Object>) team.get("players")) {
           LinkedHashMap<String, Object> player = (LinkedHashMap<String, Object>) player_raw;
 
-          team_players.add(new Player((String)player.get("nickname"), (Integer)player.get("score")));
+          teamPlayers.add(new Player((String)player.get("nickname"), (Integer)player.get("score")));
         }
 
-        teams.add(new Team((String)team.get("name"), (String)team.get("color"), (Integer)team.get("score"), team_players));
+        teams.add(new Team((String)team.get("name"), (String)team.get("color"), (Integer)team.get("score"), teamPlayers));
       }
 
-      return new Database(converter.list_to_map(teams), configuration.getDouble("multiplier"));
+      return new Database(converter.listToMap(teams), configuration.getDouble("multiplier"));
     }
 
     catch (Exception e) {
@@ -52,17 +52,17 @@ public class Fallback {
 
   public boolean write_to_config(Database data) {
     try {
-      YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(config_path + config_name));
-      configuration.save(new File(config_path + "backup/old_" + System.currentTimeMillis() + config_name));
+      YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(configPath + configName));
+      configuration.save(new File(configPath + "backup/old_" + System.currentTimeMillis() + configName));
 
-      configuration.set("teams", converter.map_to_list(data.teams));
+      configuration.set("teams", converter.mapToList(data.teams));
       configuration.set("multiplier", data.multiplier);
 
-      configuration.save(new File(config_path + config_name));
+      configuration.save(new File(configPath + configName));
       
       // A dirty workaround, but this works so...
 
-      Path path = Paths.get(config_path + config_name);
+      Path path = Paths.get(configPath + configName);
       String content = Files.readString(path);
       content = content.replace(" !!mccc.core.local.data.Team", "");
       Files.writeString(path, content, StandardCharsets.UTF_8);

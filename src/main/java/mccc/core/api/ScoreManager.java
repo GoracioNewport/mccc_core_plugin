@@ -10,37 +10,38 @@ import java.util.Objects;
 
 public class ScoreManager {
 
-  public double get_multiplier() {
+  public double getMultiplier() {
     return plugin.repository.data.multiplier;
   }
-  public void set_multiplier(double multiplier) {
+  public void setMultiplier(double multiplier) {
     plugin.repository.data.multiplier = multiplier;
   }
 
-  public void set_score(String team_name, int score) {
-    Team team = plugin.apiManager.teamManager.get_team(team_name);
+  public void setScore(String teamName, int score) {
+    Team team = plugin.apiManager.teamManager.getTeam(teamName);
 
     if (team == null) {
-      plugin.getLogger().warning("Unable to set sore to team " + team_name + ", no such team");
+      plugin.getLogger().warning("Unable to set sore to team " + teamName + ", no such team");
       return;
     }
 
     team.score = score;
-    plugin.apiManager.teamManager.set_team(team.name, team);
+    plugin.apiManager.teamManager.setTeam(team.name, team);
   }
+  
 
-  public void add_score(String team_name, int amount, String message, String creditor_name) {
-    Team team = plugin.apiManager.teamManager.get_team(team_name);
+  public void addScore(String teamName, int amount, String message, String creditorName) {
+    Team team = plugin.apiManager.teamManager.getTeam(teamName);
 
     if (team == null) {
-      plugin.getLogger().warning("Unable to add score to team " + team_name + ", no such team");
+      plugin.getLogger().warning("Unable to add score to team " + teamName + ", no such team");
       return;
     }
 
-    Player creditor = plugin.apiManager.teamManager.get_player_by_team(team.name, creditor_name);
+    Player creditor = plugin.apiManager.teamManager.getPlayerByTeam(team.name, creditorName);
 
-    amount = (int)(amount * get_multiplier());
-    set_score(team.name, team.score + amount);
+    amount = (int)(amount * getMultiplier());
+    setScore(team.name, team.score + amount);
 
     if (message != null) {
       String output = team.color + "[" + ChatColor.RESET + "+" + amount + team.color + "] " + ChatColor.RESET + message;
@@ -53,47 +54,47 @@ public class ScoreManager {
     }
 
     if (creditor != null)
-      add_player_score(creditor.nickname, amount);
+      addPlayerScore(creditor.nickname, amount);
   }
 
-  public void add_score(String player_name, int amount, String message) {
-    Team team = plugin.apiManager.teamManager.get_team_by_player(player_name);
+  public void addScore(String playerName, int amount, String message) {
+    Team team = plugin.apiManager.teamManager.getTeamByPlayer(playerName);
 
     if (team == null) {
-      plugin.getLogger().warning("Unable to add score to team with player " + player_name + ", no such team");
+      plugin.getLogger().warning("Unable to add score to team with player " + playerName + ", no such team");
       return;
     }
 
-    add_score(team.name, amount, message, player_name);
+    addScore(team.name, amount, message, playerName);
   }
-  private void set_player_score(String player_name, int score) {
-    Team team = plugin.apiManager.teamManager.get_team_by_player(player_name);
+  private void setPlayerScore(String playerName, int score) {
+    Team team = plugin.apiManager.teamManager.getTeamByPlayer(playerName);
 
     if (team == null) {
-      plugin.getLogger().warning("Unable to set player score for player " + player_name + ", no such team");
+      plugin.getLogger().warning("Unable to set player score for player " + playerName + ", no such team");
       return;
     }
 
     for (Player team_player : team.players)
-      if (Objects.equals(team_player.nickname, player_name))
+      if (Objects.equals(team_player.nickname, playerName))
         team_player.score = score;
 
-    plugin.apiManager.teamManager.set_team(team.name, team);
+    plugin.apiManager.teamManager.setTeam(team.name, team);
   }
 
-  private void add_player_score(String player_name, int score) {
-    Team team = plugin.apiManager.teamManager.get_team_by_player(player_name);
+  private void addPlayerScore(String playerName, int score) {
+    Team team = plugin.apiManager.teamManager.getTeamByPlayer(playerName);
 
     if (team == null) {
-      plugin.getLogger().warning("Unable to add player score for player " + player_name + ", no such team");
+      plugin.getLogger().warning("Unable to add player score for player " + playerName + ", no such team");
       return;
     }
 
     for (Player team_player : team.players)
-      if (Objects.equals(team_player.nickname, player_name))
+      if (Objects.equals(team_player.nickname, playerName))
         team_player.score += score;
 
-    plugin.apiManager.teamManager.set_team(team.name, team);
+    plugin.apiManager.teamManager.setTeam(team.name, team);
   }
 
   private final Core plugin;

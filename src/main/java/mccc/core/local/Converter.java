@@ -8,25 +8,25 @@ import java.util.List;
 
 public class Converter {
 
-  public LinkedHashMap<String, Team> list_to_map(List<Team> list) {
-    LinkedHashMap<String, Team> return_value =  new LinkedHashMap<>();
+  public LinkedHashMap<String, Team> listToMap(List<Team> list) {
+    LinkedHashMap<String, Team> returnValue =  new LinkedHashMap<>();
 
     for (Team team : list) {
-      return_value.put(team.name, team);
+      returnValue.put(team.name, team);
     }
 
-    return return_value;
+    return returnValue;
   }
 
-  public List<Team> map_to_list(LinkedHashMap<String, Team> data) {
+  public List<Team> mapToList(LinkedHashMap<String, Team> data) {
 
-    List<Team> return_value = new ArrayList<>();
+    List<Team> returnValue = new ArrayList<>();
 
     for (String key_name : new ArrayList<>(data.keySet()))
-      return_value.add(data.get(key_name));
+      returnValue.add(data.get(key_name));
 
 
-    return return_value;
+    return returnValue;
   }
 
 }

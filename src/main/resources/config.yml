@@ -1,4 +1,4 @@
-team_colors:
+teamColors:
   - §4
   - §c
   - §6
@@ -15,6 +15,6 @@ team_colors:
   - §7
   - §8
   - §0
-scoreboard_width: 64
-service_groups:
+scoreboardWidth: 64
+serviceGroups:
   - admin

@@ -34,7 +34,7 @@ public class AdminCommands implements CommandExecutor {
             return false;
           }
 
-          String entity_name = args[3];
+          String entityName = args[3];
           int amount = Integer.parseInt(args[4]);
           String message = null;
 
@@ -42,9 +42,9 @@ public class AdminCommands implements CommandExecutor {
             message = args[5];
 
           if (args[2].equals("player"))
-            plugin.apiManager.scoreManager.add_score(entity_name, amount, message);
+            plugin.apiManager.scoreManager.addScore(entityName, amount, message);
           else
-            plugin.apiManager.scoreManager.add_score(entity_name, amount, message, null);
+            plugin.apiManager.scoreManager.addScore(entityName, amount, message, null);
         }
       }
     }
@@ -56,13 +56,13 @@ public class AdminCommands implements CommandExecutor {
       }
 
       if (args[1].equals("clear"))
-        plugin.permissionManager.clear_groups();
+        plugin.permissionManager.clearGroups();
 
       if (args[1].equals("init"))
-        plugin.permissionManager.initialize_team_groups();
+        plugin.permissionManager.initializeTeamGroups();
 
       if (args[1].equals("fill"))
-        plugin.permissionManager.fill_team_groups();
+        plugin.permissionManager.fillTeamGroups();
 
       if (args[1].equals("give")) {
         if (args.length == 2) {
@@ -70,7 +70,7 @@ public class AdminCommands implements CommandExecutor {
           return true;
         }
 
-        plugin.permissionManager.assign_player_to_team(args[2]);
+        plugin.permissionManager.assignPlayerToTeam(args[2]);
       }
     }
 

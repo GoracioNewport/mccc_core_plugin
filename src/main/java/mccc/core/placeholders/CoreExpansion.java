@@ -34,11 +34,11 @@ public class CoreExpansion extends PlaceholderExpansion {
   @Override
   public String onRequest(OfflinePlayer player, String params) {
 
-    String[] parsed_params = params.split("_");
+    String[] parsedParams = params.split("_");
 
-    if (Objects.equals(parsed_params[0], "player")) {
-      if (Objects.equals(parsed_params[1], "team")) {
-        LinkedHashMap<String, Team> teams = plugin.apiManager.teamManager.get_teams();
+    if (Objects.equals(parsedParams[0], "player")) {
+      if (Objects.equals(parsedParams[1], "team")) {
+        LinkedHashMap<String, Team> teams = plugin.apiManager.teamManager.getTeams();
 
         for (Team team : teams.values()) {
           for (Player team_player : team.players) {
@@ -52,12 +52,12 @@ public class CoreExpansion extends PlaceholderExpansion {
 
     }
 
-    if (Objects.equals(parsed_params[0], "team")) {
+    if (Objects.equals(parsedParams[0], "team")) {
 
-      int team_index;
+      int teamIndex;
 
       try {
-        team_index = Integer.parseInt(parsed_params[1]);
+        teamIndex = Integer.parseInt(parsedParams[1]);
       }
 
       catch (Exception e) {
@@ -65,25 +65,25 @@ public class CoreExpansion extends PlaceholderExpansion {
         return "INVALID TEAM INDEX";
       }
 
-      Team team = plugin.apiManager.teamManager.get_team_by_index(team_index);
+      Team team = plugin.apiManager.teamManager.getTeamByIndex(teamIndex);
 
-      if (parsed_params.length < 3)
+      if (parsedParams.length < 3)
         return null;
 
-      if (Objects.equals(parsed_params[2], "name"))
+      if (Objects.equals(parsedParams[2], "name"))
         return team.color + team.name + ChatColor.RESET;
 
-      if (Objects.equals(parsed_params[2], "score"))
+      if (Objects.equals(parsedParams[2], "score"))
         return team.color + team.score.toString() + ChatColor.RESET;
 
-      if (Objects.equals(parsed_params[2], "color"))
+      if (Objects.equals(parsedParams[2], "color"))
         return team.color;
 
-      if (Objects.equals(parsed_params[2], "player")) {
-        int player_index;
+      if (Objects.equals(parsedParams[2], "player")) {
+        int playerIndex;
 
         try {
-          player_index = Integer.parseInt(parsed_params[3]);
+          playerIndex = Integer.parseInt(parsedParams[3]);
         }
 
         catch (Exception e) {
@@ -91,61 +91,61 @@ public class CoreExpansion extends PlaceholderExpansion {
           return "INVALID PLAYER INDEX";
         }
 
-        ArrayList<Player> team_players = team.players;
-        Player team_player;
+        ArrayList<Player> teamPlayers = team.players;
+        Player teamPlayer;
 
-        if (player_index < team_players.size())
-          team_player = team_players.get(player_index);
+        if (playerIndex < teamPlayers.size())
+          teamPlayer = teamPlayers.get(playerIndex);
         else
           return "PLAYER INDEX OUT OF RANGE";
 
-        if (parsed_params.length < 5)
+        if (parsedParams.length < 5)
           return null;
 
-        if (Objects.equals(parsed_params[4], "name")) {
-          return team.color + team_player.nickname + ChatColor.RESET;
+        if (Objects.equals(parsedParams[4], "name")) {
+          return team.color + teamPlayer.nickname + ChatColor.RESET;
         }
 
-        if (Objects.equals(parsed_params[4], "score")) {
-          return team.color + team_player.score.toString() + ChatColor.RESET;
+        if (Objects.equals(parsedParams[4], "score")) {
+          return team.color + teamPlayer.score.toString() + ChatColor.RESET;
         }
       }
     }
 
-    if (Objects.equals(parsed_params[0], "scoreboard")) {
-      int scoreboard_width;
+    if (Objects.equals(parsedParams[0], "scoreboard")) {
+      int scoreboardWidth;
 
       try {
-        scoreboard_width = plugin.getConfig().getInt("scoreboard_width");
+        scoreboardWidth = plugin.getConfig().getInt("scoreboardWidth");
       }
       catch (Exception e) {
         e.printStackTrace();
         return "SCOREBOARD WIDTH ERROR";
       }
 
-      if (Objects.equals(parsed_params[1], "team")) {
-        int team_index;
+      if (Objects.equals(parsedParams[1], "team")) {
+        int teamIndex;
         try {
-          team_index = Integer.parseInt(parsed_params[2]);
+          teamIndex = Integer.parseInt(parsedParams[2]);
         }
         catch (Exception e) {
           e.printStackTrace();
           return "INVALID TEAM INDEX";
         }
 
-        Team team = plugin.apiManager.teamManager.get_team_by_index(team_index);
+        Team team = plugin.apiManager.teamManager.getTeamByIndex(teamIndex);
 
-        if (Objects.equals(parsed_params[3], "header")) {
-          ArrayList<String> team_header = new ArrayList<>(Arrays.asList("[№" + (team_index + 1) + "] " + team.name, "Score: " + team.score));
-          return PlaceholderAPI.setPlaceholders(player, pad_strings(team_header, scoreboard_width));
+        if (Objects.equals(parsedParams[3], "header")) {
+          ArrayList<String> teamHeader = new ArrayList<>(Arrays.asList("[№" + (teamIndex + 1) + "] " + team.name, "Score: " + team.score));
+          return PlaceholderAPI.setPlaceholders(player, padStrings(teamHeader, scoreboardWidth));
         }
 
-        if (Objects.equals(parsed_params[3], "players")) {
-          ArrayList<String> team_player_names = new ArrayList<>();
+        if (Objects.equals(parsedParams[3], "players")) {
+          ArrayList<String> teamPlayerNames = new ArrayList<>();
           for (Player team_player : team.players)
-            team_player_names.add(team_player.nickname);
+            teamPlayerNames.add(team_player.nickname);
 
-          return PlaceholderAPI.setPlaceholders(player, pad_strings(team_player_names, scoreboard_width));
+          return PlaceholderAPI.setPlaceholders(player, padStrings(teamPlayerNames, scoreboardWidth));
         }
       }
     }
@@ -160,22 +160,22 @@ public class CoreExpansion extends PlaceholderExpansion {
     plugin = plugin_;
   }
 
-  private String pad_strings(ArrayList<String> strings, int length) {
-    int contents_length = 0;
+  private String padStrings(ArrayList<String> strings, int length) {
+    int contentsLength = 0;
     for (String string : strings)
-      contents_length += string.length();
+      contentsLength += string.length();
 
-    int spaces_left = length - contents_length;
-    int strings_left = strings.size() - 1;
+    int spacesLeft = length - contentsLength;
+    int stringsLeft = strings.size() - 1;
 
     StringBuilder total_string = new StringBuilder();
 
     for (int i = 0; i < strings.size() - 1; i++) {
       total_string.append(strings.get(i));
-      int spaces_to_insert = spaces_left / strings_left;
-      strings_left--;
+      int spaces_to_insert = spacesLeft / stringsLeft;
+      stringsLeft--;
       total_string.append(" ".repeat(spaces_to_insert));
-      spaces_left -= spaces_to_insert;
+      spacesLeft -= spaces_to_insert;
     }
 
     total_string.append(strings.get(strings.size() - 1));
