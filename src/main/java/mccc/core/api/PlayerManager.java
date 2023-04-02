@@ -14,7 +14,7 @@ public class PlayerManager {
   public void setGlobalGamemode(GameMode gamemode) {
 
     for (org.bukkit.entity.Player player : Bukkit.getOnlinePlayers())
-      if (!player.hasPermission("admin"))
+      if (plugin.apiManager.teamManager.getTeamByPlayer(player.getName()) != null)
         player.setGameMode(gamemode);
 
   }

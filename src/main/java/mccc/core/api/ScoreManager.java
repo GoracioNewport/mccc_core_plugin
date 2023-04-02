@@ -5,6 +5,7 @@ import mccc.core.local.data.Player;
 import mccc.core.local.data.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 
 import java.util.Objects;
 
@@ -17,7 +18,15 @@ public class ScoreManager {
     plugin.repository.data.multiplier = multiplier;
   }
 
-  public void setScore(String teamName, int score) {
+  public void addMultiplier(double addition) {
+    setMultiplier(getMultiplier() + addition);
+  }
+
+  private int multiplyScore(int amount) {
+    return (int)(amount * getMultiplier());
+  }
+
+  public void setScoreTeam(String teamName, int score) {
     Team team = plugin.apiManager.teamManager.getTeam(teamName);
 
     if (team == null) {
@@ -30,7 +39,7 @@ public class ScoreManager {
   }
   
 
-  public void addScore(String teamName, int amount, String message, String creditorName) {
+  public void addScoreTeam(String teamName, int amount, String message) {
     Team team = plugin.apiManager.teamManager.getTeam(teamName);
 
     if (team == null) {
@@ -38,26 +47,23 @@ public class ScoreManager {
       return;
     }
 
-    Player creditor = plugin.apiManager.teamManager.getPlayerByTeam(team.name, creditorName);
-
-    amount = (int)(amount * getMultiplier());
-    setScore(team.name, team.score + amount);
+    amount = multiplyScore(amount);
+    setScoreTeam(team.name, team.score + amount);
 
     if (message != null) {
       String output = team.color + "[" + ChatColor.RESET + "+" + amount + team.color + "] " + ChatColor.RESET + message;
 
       for (Player player : team.players) {
         org.bukkit.entity.Player bukkit_player = Bukkit.getPlayer(player.nickname);
-        if (bukkit_player != null)
+        if (bukkit_player != null) {
           bukkit_player.sendMessage(output);
+          bukkit_player.playSound(bukkit_player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+        }
       }
     }
-
-    if (creditor != null)
-      addPlayerScore(creditor.nickname, amount);
   }
 
-  public void addScore(String playerName, int amount, String message) {
+  public void addScorePlayer(String playerName, int amount, String message) {
     Team team = plugin.apiManager.teamManager.getTeamByPlayer(playerName);
 
     if (team == null) {
@@ -65,9 +71,10 @@ public class ScoreManager {
       return;
     }
 
-    addScore(team.name, amount, message, playerName);
+    addScoreTeam(team.name, amount, message);
+    addScorePlayerOnly(playerName, (int)(amount * getMultiplier()));
   }
-  private void setPlayerScore(String playerName, int score) {
+  private void setScorePlayerOnly(String playerName, int score) {
     Team team = plugin.apiManager.teamManager.getTeamByPlayer(playerName);
 
     if (team == null) {
@@ -82,7 +89,7 @@ public class ScoreManager {
     plugin.apiManager.teamManager.setTeam(team.name, team);
   }
 
-  private void addPlayerScore(String playerName, int score) {
+  private void addScorePlayerOnly(String playerName, int score) {
     Team team = plugin.apiManager.teamManager.getTeamByPlayer(playerName);
 
     if (team == null) {
