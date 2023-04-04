@@ -16,6 +16,8 @@ public final class Core extends JavaPlugin {
   public CoreExpansion placeholderManager;
   public PermissionManager permissionManager;
 
+  public OfflinePlayerScheduler offlinePlayerScheduler;
+
   @Override
   public void onEnable() {
 
@@ -42,6 +44,7 @@ public final class Core extends JavaPlugin {
     // API initialization
     apiManager = new ApiManager(this);
     apiManager.teamManager.assignColors();
+    offlinePlayerScheduler = new OfflinePlayerScheduler(this);
 
     // Placeholders initialization
     placeholderManager = new CoreExpansion(this);

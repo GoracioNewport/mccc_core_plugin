@@ -13,9 +13,16 @@ public class PlayerManager {
 
   public void setGlobalGamemode(GameMode gamemode) {
 
-    for (org.bukkit.entity.Player player : Bukkit.getOnlinePlayers())
-      if (plugin.apiManager.teamManager.getTeamByPlayer(player.getName()) != null)
-        player.setGameMode(gamemode);
+    ArrayList<Player> players = getPlayers();
+
+    for (Player player : players) {
+      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(player.nickname);
+
+      if (bukkitPlayer == null)
+        plugin.offlinePlayerScheduler.scheduledGamemode.put(player.nickname, gamemode);
+      else
+        bukkitPlayer.setGameMode(gamemode);
+    }
 
   }
 
