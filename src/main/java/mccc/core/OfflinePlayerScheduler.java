@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 public class OfflinePlayerScheduler {
 
-  public HashMap<String, Location> scheduledLocation;
-  public HashMap<String, GameMode> scheduledGamemode;
+  public HashMap<String, Location> scheduledLocation = new HashMap<>();
+  public HashMap<String, GameMode> scheduledGamemode = new HashMap<>();
 
   public void remove(String playerName) {
     scheduledLocation.remove(playerName);
