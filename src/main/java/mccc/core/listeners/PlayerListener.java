@@ -2,9 +2,11 @@ package mccc.core.listeners;
 
 import mccc.core.Core;
 import mccc.core.local.data.Team;
+import mccc.core.stages.Cutscene;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 public class PlayerListener implements Listener {
 
@@ -34,6 +36,13 @@ public class PlayerListener implements Listener {
       plugin.offlinePlayerScheduler.scheduledLocation.remove(event.getPlayer().getName());
     }
 
+  }
+
+  @EventHandler
+  public void onPlayerMove(PlayerMoveEvent event) {
+    if (plugin.stageManager.getCurrentStage() instanceof Cutscene) {
+      event.setCancelled(true);
+    }
   }
 
   private final Core plugin;

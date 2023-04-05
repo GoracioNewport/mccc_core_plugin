@@ -155,6 +155,14 @@ public class TeamManager {
     requestPlayerToTeamMapping();
   }
 
+  public void fetchRepository() {
+    plugin.repository.fetch();
+  }
+
+  public void writeRepository() {
+    plugin.repository.write();
+  }
+
   private final Core plugin;
   public TeamManager(Core plugin_) {
     plugin = plugin_;
