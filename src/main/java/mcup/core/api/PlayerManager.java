@@ -3,16 +3,13 @@ package mcup.core.api;
 import mcup.core.Core;
 import mcup.core.local.data.Player;
 import mcup.core.local.data.Team;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
-import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Collection;
 
 
 public class PlayerManager {
@@ -47,32 +44,59 @@ public class PlayerManager {
 
   }
 
-  public void playGlobalSound(Sound sound, float pitch) {
-    for (org.bukkit.entity.Player player : Bukkit.getOnlinePlayers()) {
-      player.playSound(player, sound, 1.0f, pitch);
+  public void teamTeleport(ArrayList<Location> locations, Team team) {
+
+    for (int i = 0; i < locations.size(); i++) {
+      if (i >= team.players.size())
+        break;
+
+      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(team.players.get(i).nickname);
+
+      if (bukkitPlayer == null)
+        plugin.offlinePlayerScheduler.scheduledLocation.put(team.players.get(i).nickname, locations.get(i));
+      else
+        bukkitPlayer.teleport(locations.get(i));
     }
+
   }
 
-  public void sendGlobalTitle(String title, String subTitle, Title.Times times, Sound sound, float pitch) {
-
-    Audience audience = plugin.adventureApi.players();
-
-    audience.showTitle(Title.title(
-      Component.text(title),
-      Component.text(subTitle),
-      times
-    ));
-
-    if (sound != null)
-      playGlobalSound(sound, pitch);
+  public void playSound(Sound sound, float pitch, Collection<? extends org.bukkit.entity.Player> target) {
+    for (org.bukkit.entity.Player player : target)
+      if (sound != null)
+        player.playSound(player, sound, 1.0f, pitch);
   }
 
-  public void sendGlobalTitle(String title, String subTitle) {
-    sendGlobalTitle(title, subTitle, Title.DEFAULT_TIMES, null, 1.0f);
+  public void playTeamSound(Sound sound, float pitch, Team team) {
+    Collection<org.bukkit.entity.Player> target = new ArrayList<>();
+    for (Player teamPlayer : team.players) {
+      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(teamPlayer.nickname);
+
+      if (bukkitPlayer != null)
+        target.add(bukkitPlayer);
+    }
+
+    playSound(sound, pitch, target);
   }
 
-  public void sendGlobalTitle(String title, String subtitle, Sound sound, float pitch) {
-    sendGlobalTitle(title, subtitle, Title.DEFAULT_TIMES, sound, pitch);
+  public void sendTitle(String title, String subTitle, int fadeIn, int stay, int fadeOut, Collection<? extends org.bukkit.entity.Player> target) {
+
+    for (org.bukkit.entity.Player player : target)
+      player.sendTitle(title, subTitle, fadeIn, stay, fadeOut);
+
+  }
+
+  public void sendTeamTitle(String  title, String subTitle, int fadeIn, int stay, int fadeOut, Team team) {
+
+    Collection<org.bukkit.entity.Player> target = new ArrayList<>();
+    for (Player teamPlayer : team.players) {
+      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(teamPlayer.nickname);
+
+      if (bukkitPlayer != null)
+        target.add(bukkitPlayer);
+    }
+
+    sendTitle(title, subTitle, fadeIn, stay, fadeOut, target);
+
   }
 
   public ArrayList<Player> getPlayers() {
