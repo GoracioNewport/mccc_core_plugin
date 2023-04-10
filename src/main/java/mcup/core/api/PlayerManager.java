@@ -99,6 +99,46 @@ public class PlayerManager {
 
   }
 
+  public void clearInventory(Collection<? extends org.bukkit.entity.Player> target) {
+    for (org.bukkit.entity.Player player : target)
+      player.getInventory().clear();
+  }
+
+  public void clearTeamInventory(Team team) {
+    clearInventory(getOnlineTeamPlayers(team));
+  }
+
+  public void clearPlayersInventory() {
+    clearInventory(getOnlinePlayers());
+  }
+
+  public ArrayList<org.bukkit.entity.Player> getOnlinePlayers() {
+    ArrayList<org.bukkit.entity.Player> target = new ArrayList<>();
+
+    for (Player player : getPlayers()) {
+      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(player.nickname);
+
+      if (bukkitPlayer != null)
+        target.add(bukkitPlayer);
+    }
+
+    return target;
+  }
+
+  public ArrayList<org.bukkit.entity.Player> getOnlineTeamPlayers(Team team) {
+
+    ArrayList<org.bukkit.entity.Player> target = new ArrayList<>();
+
+    for (Player player : team.players) {
+      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(player.nickname);
+
+      if (bukkitPlayer != null)
+        target.add(bukkitPlayer);
+    }
+
+    return target;
+  }
+
   public ArrayList<Player> getPlayers() {
 
     ArrayList<Player> players = new ArrayList<>();
