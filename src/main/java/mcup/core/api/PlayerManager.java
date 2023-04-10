@@ -14,49 +14,68 @@ import java.util.Collection;
 
 public class PlayerManager {
 
-  public void setGlobalGamemode(GameMode gamemode) {
+  public void setPlayerGamemode(GameMode gamemode, String playerName) {
+    org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
 
-    ArrayList<Player> players = getPlayers();
+    if (bukkitPlayer == null)
+      plugin.offlinePlayerScheduler.scheduledGamemode.put(playerName, gamemode);
+    else
+      bukkitPlayer.setGameMode(gamemode);
+  }
+  public void setGamemode(GameMode gamemode, ArrayList<String> target) {
 
-    for (Player player : players) {
-      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(player.nickname);
-
-      if (bukkitPlayer == null)
-        plugin.offlinePlayerScheduler.scheduledGamemode.put(player.nickname, gamemode);
-      else
-        bukkitPlayer.setGameMode(gamemode);
-    }
+    for (String playerName : target)
+      setPlayerGamemode(gamemode, playerName);
 
   }
 
-  public void globalTeleport(ArrayList<Location> locations) {
+  public void setPlayersGamemode(GameMode gamemode) {
 
-    ArrayList<Player> players = getPlayers();
+    ArrayList<String> playerNames = new ArrayList<>();
 
-    for (int i = 0; i < locations.size(); i++) {
-      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(players.get(i).nickname);
+    for (Player player : getPlayers())
+      playerNames.add(player.nickname);
 
-      if (bukkitPlayer == null)
-        plugin.offlinePlayerScheduler.scheduledLocation.put(players.get(i).nickname, locations.get(i));
-      else
-        bukkitPlayer.teleport(locations.get(i));
-    }
+    setGamemode(gamemode, playerNames);
+  }
 
+  public void setTeamGamemode(GameMode gamemode, Team team) {
+
+    ArrayList<String> teamPlayerNames = new ArrayList<>();
+
+    for (Player player : team.players)
+      teamPlayerNames.add(player.nickname);
+
+    setGamemode(gamemode, teamPlayerNames);
+  }
+
+  @Deprecated
+  public void setGlobalGamemode(GameMode gamemode) {
+    setPlayersGamemode(gamemode);
+  }
+
+  public void playerTeleport(Location location, String playerName) {
+
+    org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
+
+    if (bukkitPlayer == null)
+      plugin.offlinePlayerScheduler.scheduledLocation.put(playerName, location);
+    else
+      bukkitPlayer.teleport(location);
   }
 
   public void teamTeleport(ArrayList<Location> locations, Team team) {
+    if (locations.size() != team.players.size())
+      plugin.getLogger().warning("Tried to teleport team to a location, but player count and locations count does not match");
 
-    for (int i = 0; i < locations.size(); i++) {
-      if (i >= team.players.size())
-        break;
+    for (int i = 0; i < team.players.size(); i++)
+      playerTeleport(locations.get(i % locations.size()), team.players.get(i).nickname);
+  }
 
-      org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(team.players.get(i).nickname);
+  public void teamTeleport(Location location, Team team) {
 
-      if (bukkitPlayer == null)
-        plugin.offlinePlayerScheduler.scheduledLocation.put(team.players.get(i).nickname, locations.get(i));
-      else
-        bukkitPlayer.teleport(locations.get(i));
-    }
+    for (Player player : team.players)
+      playerTeleport(location, player.nickname);
 
   }
 
