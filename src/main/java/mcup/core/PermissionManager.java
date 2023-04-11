@@ -1,7 +1,7 @@
-package mccc.core;
+package mcup.core;
 
-import mccc.core.local.data.Player;
-import mccc.core.local.data.Team;
+import mcup.core.local.data.Player;
+import mcup.core.local.data.Team;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;

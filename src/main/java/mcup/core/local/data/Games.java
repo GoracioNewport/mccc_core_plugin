@@ -1,4 +1,4 @@
-package mccc.core.local.data;
+package mcup.core.local.data;
 
 import java.util.List;
 

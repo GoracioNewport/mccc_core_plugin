@@ -1,8 +1,8 @@
-package mccc.core.api;
+package mcup.core.api;
 
-import mccc.core.Core;
-import mccc.core.local.data.Player;
-import mccc.core.local.data.Team;
+import mcup.core.Core;
+import mcup.core.local.data.Player;
+import mcup.core.local.data.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;

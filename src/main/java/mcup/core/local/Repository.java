@@ -1,7 +1,7 @@
-package mccc.core.local;
+package mcup.core.local;
 
-import mccc.core.Core;
-import mccc.core.local.data.Database;
+import mcup.core.Core;
+import mcup.core.local.data.Database;
 
 
 public class Repository {

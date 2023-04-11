@@ -1,6 +1,5 @@
-package mccc.core.local.data;
+package mcup.core.local.data;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class Database {

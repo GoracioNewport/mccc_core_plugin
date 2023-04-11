@@ -1,8 +1,8 @@
-package mccc.core.placeholders;
+package mcup.core.placeholders;
 
-import mccc.core.Core;
-import mccc.core.local.data.Player;
-import mccc.core.local.data.Team;
+import mcup.core.Core;
+import mcup.core.local.data.Player;
+import mcup.core.local.data.Team;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;

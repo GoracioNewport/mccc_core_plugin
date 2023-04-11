@@ -1,7 +1,6 @@
-package mccc.core.local.data;
+package mcup.core.local.data;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Team {
   public String name;

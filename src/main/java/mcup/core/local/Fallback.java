@@ -1,8 +1,8 @@
-package mccc.core.local;
+package mcup.core.local;
 
-import mccc.core.local.data.Database;
-import mccc.core.local.data.Player;
-import mccc.core.local.data.Team;
+import mcup.core.local.data.Database;
+import mcup.core.local.data.Player;
+import mcup.core.local.data.Team;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -64,7 +64,7 @@ public class Fallback {
 
       Path path = Paths.get(configPath + configName);
       String content = Files.readString(path);
-      content = content.replace(" !!mccc.core.local.data.Team", "");
+      content = content.replace(" !!mcup.core.local.data.Team", "");
       Files.writeString(path, content, StandardCharsets.UTF_8);
 
       return true;

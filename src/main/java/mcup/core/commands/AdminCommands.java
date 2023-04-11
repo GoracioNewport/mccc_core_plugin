@@ -1,22 +1,30 @@
-package mccc.core.commands;
+package mcup.core.commands;
 
-import mccc.core.Core;
+import mcup.core.Core;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class AdminCommands implements CommandExecutor {
 
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
+    if (!sender.hasPermission("admin")) {
+      sender.sendMessage("Never gonna give you up, never gonna let you down");
+      return false;
+    }
+
     if (args.length == 0) {
       // TODO
       return false;
     }
 
-    if (args[0].equals("score")) {
+    if (Objects.equals(args[0], "score")) {
       if (args.length == 1) {
         // TODO
         return false;
@@ -49,7 +57,7 @@ public class AdminCommands implements CommandExecutor {
       }
     }
 
-    if (args[0].equals("permissions")) {
+    if (Objects.equals(args[0], "permissions")) {
       if (args.length == 1) {
         // TODO
         return true;
@@ -74,7 +82,7 @@ public class AdminCommands implements CommandExecutor {
       }
     }
 
-    if (args[0].equals("database")) {
+    if (Objects.equals(args[0], "database")) {
       if (args.length == 1) {
         // TODO
         return false;
@@ -86,6 +94,44 @@ public class AdminCommands implements CommandExecutor {
 
       if (args[1].equals("write")) {
         plugin.repository.write();
+      }
+    }
+
+    if (Objects.equals(args[0], "sequence")) {
+
+      if (args.length == 1) {
+        // ...
+      }
+
+      if (Objects.equals(args[1], "start"))
+        plugin.stageManager.startSequence();
+
+      if (Objects.equals(args[1], "terminate"))
+        plugin.stageManager.terminateSequence();
+
+      if (Objects.equals(args[1], "restart"))
+        plugin.stageManager.restartSequence();
+
+      if (Objects.equals(args[1], "next"))
+        plugin.stageManager.switchToNextStage();
+
+      if (Objects.equals(args[1], "prev"))
+        plugin.stageManager.switchToPreviousStage();
+
+      if (Objects.equals(args[1], "current"))
+        sender.sendMessage(plugin.stageManager.getCurrentStage().toString());
+    }
+
+    if (Objects.equals(args[0], "debug")) {
+      if (args.length == 1) {
+        //...
+      }
+
+      if (Objects.equals(args[1], "location") && sender instanceof Player) {
+        plugin.getConfig().set("debug.location", ((Player) sender).getLocation());
+        plugin.saveConfig();
+
+        sender.sendMessage("Location written to default config file");
       }
     }
 

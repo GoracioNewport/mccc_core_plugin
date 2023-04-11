@@ -1,8 +1,8 @@
-package mccc.core;
+package mcup.core;
 
-import mccc.core.api.PlayerManager;
-import mccc.core.api.ScoreManager;
-import mccc.core.api.TeamManager;
+import mcup.core.api.PlayerManager;
+import mcup.core.api.ScoreManager;
+import mcup.core.api.TeamManager;
 
 public class ApiManager {
 

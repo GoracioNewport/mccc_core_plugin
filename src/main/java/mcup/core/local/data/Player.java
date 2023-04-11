@@ -1,4 +1,4 @@
-package mccc.core.local.data;
+package mcup.core.local.data;
 
 public class Player {
   public String nickname;

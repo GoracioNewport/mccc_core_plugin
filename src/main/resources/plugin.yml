@@ -1,6 +1,6 @@
 name: Core
 version: '${project.version}'
-main: mccc.core.Core
+main: mcup.core.Core
 api-version: 1.18
 authors: [ GoracioNewport ]
 description: Core plugin for basic functions handling

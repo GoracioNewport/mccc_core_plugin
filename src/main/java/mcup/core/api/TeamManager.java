@@ -1,8 +1,8 @@
-package mccc.core.api;
+package mcup.core.api;
 
-import mccc.core.Core;
-import mccc.core.local.data.Player;
-import mccc.core.local.data.Team;
+import mcup.core.Core;
+import mcup.core.local.data.Player;
+import mcup.core.local.data.Team;
 
 import java.util.*;
 
@@ -153,6 +153,14 @@ public class TeamManager {
   public void requestStructureUpdate() {
     requestTeamSorting();
     requestPlayerToTeamMapping();
+  }
+
+  public void fetchRepository() {
+    plugin.repository.fetch();
+  }
+
+  public void writeRepository() {
+    plugin.repository.write();
   }
 
   private final Core plugin;

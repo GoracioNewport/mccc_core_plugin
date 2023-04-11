@@ -1,6 +1,6 @@
-package mccc.core.local;
+package mcup.core.local;
 
-import mccc.core.local.data.Team;
+import mcup.core.local.data.Team;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
