@@ -23,7 +23,7 @@ public class Waiting extends GamemodeStage {
   }
 
   @Override
-  protected String getBossBarCountdownLabelPrefix() {
+  protected String getBossBarCountdownLabel() {
     return "Ожидание игроков" + " .".repeat(Math.max(0, getSecondsElapsed() % 3 + 1));
   }
 
