@@ -16,6 +16,8 @@ import java.util.Collection;
 
 public class PlayerManager {
 
+  // GameMode management
+
   public void setPlayerGamemode(GameMode gamemode, String playerName) {
     org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
 
@@ -56,6 +58,8 @@ public class PlayerManager {
     setPlayersGamemode(gamemode);
   }
 
+  // Teleport management
+
   public void playerTeleport(Location location, String playerName) {
 
     org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
@@ -81,6 +85,8 @@ public class PlayerManager {
 
   }
 
+  // Sound management
+
   public void playSound(Sound sound, float pitch, Collection<? extends org.bukkit.entity.Player> target) {
     for (org.bukkit.entity.Player player : target)
       if (sound != null)
@@ -98,6 +104,8 @@ public class PlayerManager {
 
     playSound(sound, pitch, target);
   }
+
+  // Title management
 
   public void sendTitle(String title, String subTitle, int fadeIn, int stay, int fadeOut, Collection<? extends org.bukkit.entity.Player> target) {
 
@@ -120,11 +128,13 @@ public class PlayerManager {
 
   }
 
+  // Inventory management
+
   public void clearPlayerInventory(String playerName) {
     org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
 
     if (bukkitPlayer == null)
-      plugin.offlinePlayerScheduler.scheduledInventory.add(playerName);
+      plugin.offlinePlayerScheduler.scheduledItems.put(playerName, null);
     else
       bukkitPlayer.getInventory().clear();
   }
@@ -159,7 +169,8 @@ public class PlayerManager {
     if (bukkitPlayer == null)
       plugin.offlinePlayerScheduler.scheduledItems.put(playerName, itemStackList);
     else
-      bukkitPlayer.getInventory().setContents(itemStackList.toArray(new ItemStack[itemStackList.size()]));
+      for (ItemStack itemStack : itemStackList)
+        bukkitPlayer.getInventory().addItem(itemStack);
   }
 
   public void giveItems(ArrayList<ItemStack> itemStackList, ArrayList<String> target) {
@@ -175,6 +186,18 @@ public class PlayerManager {
 
     giveItems(itemStackList, teamPlayerNames);
   }
+
+  public void givePlayersItems(ArrayList<ItemStack> itemStackList) {
+
+    ArrayList<String> playerNames = new ArrayList<>();
+
+    for (Player player : getPlayers())
+      playerNames.add(player.nickname);
+
+    giveItems(itemStackList, playerNames);
+  }
+
+  // Potion effects management
 
   public void givePlayerEffects(ArrayList<PotionEffect> potionEffectList, String playerName) {
     org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
@@ -208,6 +231,42 @@ public class PlayerManager {
 
     giveEffects(potionEffectList, playerNames);
   }
+
+  public void clearPlayerEffects(String playerName) {
+    org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
+
+    if (bukkitPlayer == null)
+      plugin.offlinePlayerScheduler.scheduledEffects.put(playerName, null);
+    else
+      for (PotionEffect potionEffect : bukkitPlayer.getActivePotionEffects())
+        bukkitPlayer.removePotionEffect(potionEffect.getType());
+  }
+
+  public void clearEffects(ArrayList<String> target) {
+    for (String player : target)
+      clearPlayerEffects(player);
+  }
+
+  public void clearTeamEffects(Team team) {
+    ArrayList<String> teamPlayerNames = new ArrayList<>();
+
+    for (Player player : team.players)
+      teamPlayerNames.add(player.nickname);
+
+    clearEffects(teamPlayerNames);
+  }
+
+  public void clearPlayersEffects() {
+
+    ArrayList<String> playerNames = new ArrayList<>();
+
+    for (Player player : getPlayers())
+      playerNames.add(player.nickname);
+
+    clearEffects(playerNames);
+  }
+
+  // Getters
 
   public ArrayList<org.bukkit.entity.Player> getOnlinePlayers() {
     ArrayList<org.bukkit.entity.Player> target = new ArrayList<>();

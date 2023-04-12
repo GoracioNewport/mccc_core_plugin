@@ -9,41 +9,53 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class OfflinePlayerScheduler {
 
   public HashMap<String, Location> scheduledLocation = new HashMap<>();
   public HashMap<String, GameMode> scheduledGamemode = new HashMap<>();
-  public HashSet<String> scheduledInventory = new HashSet<>();
   public HashMap <String, ArrayList<ItemStack>> scheduledItems = new HashMap<>();
   public HashMap <String, ArrayList<PotionEffect>> scheduledEffects = new HashMap<>();
 
-  public void remove(String playerName) {
-    scheduledLocation.remove(playerName);
-    scheduledGamemode.remove(playerName);
-    scheduledInventory.remove(playerName);
-    scheduledItems.remove(playerName);
-    scheduledEffects.remove(playerName);
+  public void checkPlayerSchedule(Player player) {
+
+    String playerName = player.getName();
+
+    if (scheduledLocation.containsKey(playerName)) {
+      player.teleport(scheduledLocation.get(playerName));
+      scheduledLocation.remove(playerName);
+    }
+
+    if (scheduledGamemode.containsKey(playerName)) {
+      player.setGameMode(scheduledGamemode.get(playerName));
+      scheduledGamemode.remove(playerName);
+    }
+
+    if (scheduledItems.containsKey(playerName)) {
+      if (scheduledItems.get(playerName) == null)
+        player.getInventory().clear();
+      else
+        for (ItemStack itemStack : scheduledItems.get(playerName))
+          player.getInventory().addItem(itemStack);
+    }
+
+    if (scheduledEffects.containsKey(playerName)) {
+      if (scheduledEffects.get(playerName) == null)
+        for (PotionEffect potionEffect : player.getActivePotionEffects())
+          player.removePotionEffect(potionEffect.getType());
+      else
+        player.addPotionEffects(scheduledEffects.get(playerName));
+    }
+
   }
 
   public void clear() {
     scheduledLocation.clear();
     scheduledGamemode.clear();
-    scheduledInventory.clear();
     scheduledItems.clear();
     scheduledEffects.clear();
   }
-
-  public void put(String playerName, Location location, GameMode gameMode, ArrayList<ItemStack> itemStackList,
-                  ArrayList<PotionEffect> potionEffectList) {
-    scheduledLocation.put(playerName, location);
-    scheduledGamemode.put(playerName, gameMode);
-    scheduledInventory.add(playerName);
-    scheduledItems.put(playerName, itemStackList);
-    scheduledEffects.put(playerName, potionEffectList);
-  }
-  private JavaPlugin plugin;
+  private final JavaPlugin plugin;
   public OfflinePlayerScheduler(JavaPlugin plugin_) {
     plugin = plugin_;
   }
