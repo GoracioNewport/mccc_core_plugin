@@ -25,17 +25,7 @@ public class PlayerListener implements Listener {
     if (playerTeam != null)
       plugin.permissionManager.assignPlayerToTeam(event.getPlayer().getName());
 
-
-    if (plugin.offlinePlayerScheduler.scheduledGamemode.containsKey(event.getPlayer().getName())) {
-      event.getPlayer().setGameMode(plugin.offlinePlayerScheduler.scheduledGamemode.get(event.getPlayer().getName()));
-      plugin.offlinePlayerScheduler.scheduledGamemode.remove(event.getPlayer().getName());
-    }
-
-    if (plugin.offlinePlayerScheduler.scheduledLocation.containsKey(event.getPlayer().getName())) {
-      event.getPlayer().teleport(plugin.offlinePlayerScheduler.scheduledLocation.get(event.getPlayer().getName()));
-      plugin.offlinePlayerScheduler.scheduledLocation.remove(event.getPlayer().getName());
-    }
-
+    plugin.offlinePlayerScheduler.checkPlayerSchedule(event.getPlayer());
   }
 
   @EventHandler
