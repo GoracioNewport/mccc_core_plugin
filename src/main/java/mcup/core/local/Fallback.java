@@ -1,5 +1,6 @@
 package mcup.core.local;
 
+import mcup.core.Core;
 import mcup.core.local.data.Database;
 import mcup.core.local.data.Player;
 import mcup.core.local.data.Team;
@@ -16,8 +17,8 @@ import java.util.List;
 
 public class Fallback {
 
-  final private String configPath = "./config/";
-  final private String configName = "core.yml";
+  final private String configPath;
+  final private String configName;
 
   final private Converter converter = new Converter();
 
@@ -74,6 +75,13 @@ public class Fallback {
       e.printStackTrace();
       return false;
     }
+  }
+
+  private Core plugin;
+  public Fallback(Core plugin_) {
+    plugin = plugin_;
+    configPath = plugin.getConfig().getString("fallbackLocation");
+    configName = plugin.getConfig().getString("fallbackName");
   }
 
 }

@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class ScoreManager {
@@ -37,7 +38,6 @@ public class ScoreManager {
     team.score = score;
     plugin.apiManager.teamManager.setTeam(team.name, team);
   }
-  
 
   public void addScoreTeam(String teamName, int amount, String message) {
     Team team = plugin.apiManager.teamManager.getTeam(teamName);
@@ -49,6 +49,9 @@ public class ScoreManager {
 
     amount = multiplyScore(amount);
     setScoreTeam(team.name, team.score + amount);
+
+    int currentDelta = teamDeltaScore.getOrDefault(teamName, 0);
+    teamDeltaScore.put(teamName, currentDelta + amount);
 
     if (message != null) {
       String output = team.color + "[" + ChatColor.RESET + "+" + amount + team.color + "] " + ChatColor.RESET + message;
@@ -72,21 +75,7 @@ public class ScoreManager {
     }
 
     addScoreTeam(team.name, amount, message);
-    addScorePlayerOnly(playerName, (int)(amount * getMultiplier()));
-  }
-  private void setScorePlayerOnly(String playerName, int score) {
-    Team team = plugin.apiManager.teamManager.getTeamByPlayer(playerName);
-
-    if (team == null) {
-      plugin.getLogger().warning("Unable to set player score for player " + playerName + ", no such team");
-      return;
-    }
-
-    for (Player team_player : team.players)
-      if (Objects.equals(team_player.nickname, playerName))
-        team_player.score = score;
-
-    plugin.apiManager.teamManager.setTeam(team.name, team);
+    addScorePlayerOnly(playerName, multiplyScore(amount));
   }
 
   private void addScorePlayerOnly(String playerName, int score) {
@@ -101,8 +90,22 @@ public class ScoreManager {
       if (Objects.equals(team_player.nickname, playerName))
         team_player.score += score;
 
+    int currentDelta = playerDeltaScore.getOrDefault(playerName, 0);
+    playerDeltaScore.put(playerName, currentDelta + score);
+
     plugin.apiManager.teamManager.setTeam(team.name, team);
   }
+
+  public int getTeamDeltaScore(String teamName) {
+    return teamDeltaScore.getOrDefault(teamName, 0);
+  }
+
+  public int getPlayerDeltaScore(String playerName) {
+    return playerDeltaScore.getOrDefault(playerName, 0);
+  }
+
+  private HashMap<String, Integer> playerDeltaScore = new HashMap<>();
+  private HashMap<String, Integer> teamDeltaScore = new HashMap<>();
 
   private final Core plugin;
 
