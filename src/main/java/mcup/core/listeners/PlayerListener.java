@@ -7,6 +7,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+
+import java.util.ArrayList;
 
 public class PlayerListener implements Listener {
 
@@ -34,6 +38,23 @@ public class PlayerListener implements Listener {
     if (plugin.offlinePlayerScheduler.scheduledLocation.containsKey(event.getPlayer().getName())) {
       event.getPlayer().teleport(plugin.offlinePlayerScheduler.scheduledLocation.get(event.getPlayer().getName()));
       plugin.offlinePlayerScheduler.scheduledLocation.remove(event.getPlayer().getName());
+    }
+
+    if (plugin.offlinePlayerScheduler.scheduledInventory.contains(event.getPlayer().getName())) {
+      event.getPlayer().getInventory().clear();
+      plugin.offlinePlayerScheduler.scheduledInventory.remove(event.getPlayer().getName());
+    }
+
+    if (plugin.offlinePlayerScheduler.scheduledItems.containsKey(event.getPlayer().getName())) {
+      ArrayList<ItemStack> itemStackList = plugin.offlinePlayerScheduler.scheduledItems.get(event.getPlayer().getName());
+      event.getPlayer().getInventory().setContents(itemStackList.toArray(new ItemStack[itemStackList.size()]));
+      plugin.offlinePlayerScheduler.scheduledInventory.remove(event.getPlayer().getName());
+    }
+
+    if (plugin.offlinePlayerScheduler.scheduledEffects.containsKey(event.getPlayer().getName())) {
+      ArrayList<PotionEffect> potionEffectList = plugin.offlinePlayerScheduler.scheduledEffects.get(event.getPlayer().getName());
+      event.getPlayer().addPotionEffects(potionEffectList);
+      plugin.offlinePlayerScheduler.scheduledInventory.remove(event.getPlayer().getName());
     }
 
   }
