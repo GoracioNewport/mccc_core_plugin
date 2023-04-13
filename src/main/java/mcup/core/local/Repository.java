@@ -7,7 +7,7 @@ import mcup.core.local.data.Database;
 public class Repository {
 
   public Database data;
-  private final Fallback fallback = new Fallback();
+  private final Fallback fallback;
 
   private Database fetchFromDatabase() {
     // TODO
@@ -71,6 +71,7 @@ public class Repository {
   private final Core plugin;
   public Repository(Core plugin_) {
     plugin = plugin_;
+    fallback = new Fallback(plugin);
   }
 
 }

@@ -18,6 +18,9 @@ public class Waiting extends GamemodeStage {
   public void load() {
     super.load();
 
+    core.apiManager.playerManager.clearPlayersInventory();
+    core.apiManager.playerManager.clearPlayersEffects();
+
     initBossBarCountdown();
     core.apiManager.playerManager.setGlobalGamemode(GameMode.ADVENTURE);
   }

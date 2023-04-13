@@ -166,8 +166,16 @@ public class PlayerManager {
   public void givePlayerItems(ArrayList<ItemStack> itemStackList, String playerName) {
     org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
 
-    if (bukkitPlayer == null)
-      plugin.offlinePlayerScheduler.scheduledItems.put(playerName, itemStackList);
+    if (bukkitPlayer == null) {
+      ArrayList<ItemStack> previousItems = plugin.offlinePlayerScheduler.scheduledItems.getOrDefault(playerName, null);
+      if (previousItems == null)
+        previousItems = new ArrayList<>();
+
+      previousItems.addAll(itemStackList);
+
+      plugin.offlinePlayerScheduler.scheduledItems.put(playerName, previousItems);
+    }
+
     else
       for (ItemStack itemStack : itemStackList)
         bukkitPlayer.getInventory().addItem(itemStack);
@@ -202,8 +210,17 @@ public class PlayerManager {
   public void givePlayerEffects(ArrayList<PotionEffect> potionEffectList, String playerName) {
     org.bukkit.entity.Player bukkitPlayer = Bukkit.getPlayer(playerName);
 
-    if (bukkitPlayer == null)
-      plugin.offlinePlayerScheduler.scheduledEffects.put(playerName, potionEffectList);
+    if (bukkitPlayer == null) {
+      ArrayList<PotionEffect> previousEffects = plugin.offlinePlayerScheduler.scheduledEffects.getOrDefault(playerName, null);
+
+      if (previousEffects == null)
+        previousEffects = new ArrayList<>();
+
+      previousEffects.addAll(potionEffectList);
+
+      plugin.offlinePlayerScheduler.scheduledEffects.put(playerName, previousEffects);
+    }
+
     else
       bukkitPlayer.addPotionEffects(potionEffectList);
   }

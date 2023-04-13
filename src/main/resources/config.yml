@@ -10,5 +10,7 @@ teamColors:
   - §d
   - §5
 scoreboardWidth: 64
+fallbackLocation: "./config/"
+fallbackName: "core.yml"
 serviceGroups:
   - admin

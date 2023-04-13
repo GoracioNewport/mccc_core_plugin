@@ -28,6 +28,8 @@ public class StageManager {
       plugin.getLogger().warning("Unable to reset default storage. Make sure you have a declared 'storage' filed in your gamemode plugin");
     }
 
+    core.offlinePlayerScheduler.clear();
+
     fillSequence();
 
     if (stages.size() == 0)
