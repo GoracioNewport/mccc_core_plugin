@@ -104,8 +104,8 @@ public class ScoreManager {
     return playerDeltaScore.getOrDefault(playerName, 0);
   }
 
-  private HashMap<String, Integer> playerDeltaScore = new HashMap<>();
-  private HashMap<String, Integer> teamDeltaScore = new HashMap<>();
+  private final HashMap<String, Integer> playerDeltaScore = new HashMap<>();
+  private final HashMap<String, Integer> teamDeltaScore = new HashMap<>();
 
   private final Core plugin;
 

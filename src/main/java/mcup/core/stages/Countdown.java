@@ -2,15 +2,11 @@ package mcup.core.stages;
 
 import mcup.core.Core;
 import mcup.core.local.data.Team;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 public class Countdown extends GamemodeStage {
@@ -63,16 +59,18 @@ public class Countdown extends GamemodeStage {
     return false;
   }
 
-  protected Title.Times getTitleTimes(int secondsRemaining) {
+  protected int[] getTitleTimes(int secondsRemaining) {
+    int[] times;
+
     if (secondsRemaining > 10)
-      return Title.Times.times(Duration.ofMillis(500), Duration.ofMillis(1500), Duration.ofMillis(500));
+      times = new int[]{10, 30, 10};
     else
-      return Title.Times.times(Duration.ZERO, Duration.ofSeconds(1000), Duration.ZERO);
+      times = new int[]{0, 20, 10};
+
+    return times;
   }
 
   public void updateScreenCountdown(int secondsRemaining) {
-    final Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-
     if (updateSkipCondition(secondsRemaining))
       return;
 
@@ -81,16 +79,19 @@ public class Countdown extends GamemodeStage {
     String currentTitle = titleColor + "" + secondsRemaining;
     String subTitle = getSubTitle(secondsRemaining);
 
-    playersAudience.showTitle(
-      Title.title(
-        Component.text(currentTitle),
-        Component.text(subTitle),
-        getTitleTimes(secondsRemaining)
-    ));
+    int[] times = getTitleTimes(secondsRemaining);
+    core.apiManager.playerManager.sendTitle(
+      currentTitle,
+      subTitle,
+      times[0],
+      times[1],
+      times[2],
+      Bukkit.getOnlinePlayers()
+    );
 
     // How the hell do I play a note with AdventureAPI ?
-    for (Player player : onlinePlayers) {
-      // playing a note
+    // Jeez Adventure API Sucks
+    for (Player player : Bukkit.getOnlinePlayers()) {
       int tone = 10 - secondsRemaining;
 
       if (tone >= 0 && tone <= 24)
