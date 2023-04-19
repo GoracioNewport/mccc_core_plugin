@@ -37,6 +37,8 @@ public class OfflinePlayerScheduler {
       else
         for (ItemStack itemStack : scheduledItems.get(playerName))
           player.getInventory().addItem(itemStack);
+
+      scheduledItems.remove(playerName);
     }
 
     if (scheduledEffects.containsKey(playerName)) {
@@ -45,6 +47,8 @@ public class OfflinePlayerScheduler {
           player.removePotionEffect(potionEffect.getType());
       else
         player.addPotionEffects(scheduledEffects.get(playerName));
+
+      scheduledEffects.remove(playerName);
     }
 
   }
