@@ -128,6 +128,16 @@ public class PlayerManager {
 
   }
 
+  // SpawnPoint management
+
+  public void setPlayerSpawnPoint(Location location, String playerName) {
+    plugin.offlinePlayerScheduler.scheduledSpawnPoint.put(playerName, location);
+  }
+
+  public void resetPlayerSpawnPoint(String playerName) {
+    plugin.offlinePlayerScheduler.scheduledSpawnPoint.remove(playerName);
+  }
+
   // Inventory management
 
   public void clearPlayerInventory(String playerName) {

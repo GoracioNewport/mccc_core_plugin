@@ -17,7 +17,9 @@ public class OfflinePlayerScheduler {
   public HashMap <String, ArrayList<ItemStack>> scheduledItems = new HashMap<>();
   public HashMap <String, ArrayList<PotionEffect>> scheduledEffects = new HashMap<>();
 
-  public void checkPlayerSchedule(Player player) {
+  public HashMap <String, Location> scheduledSpawnPoint = new HashMap<>();
+
+  public void checkPlayerJoinSchedule(Player player) {
 
     String playerName = player.getName();
 
@@ -53,11 +55,21 @@ public class OfflinePlayerScheduler {
 
   }
 
+  public void checkPlayerRespawnSchedule(Player player) {
+
+    String playerName = player.getName();
+
+    if (scheduledSpawnPoint.containsKey(playerName))
+      player.teleport(scheduledSpawnPoint.get(playerName));
+
+  }
+
   public void clear() {
     scheduledLocation.clear();
     scheduledGamemode.clear();
     scheduledItems.clear();
     scheduledEffects.clear();
+    scheduledSpawnPoint.clear();
   }
   private final JavaPlugin plugin;
   public OfflinePlayerScheduler(JavaPlugin plugin_) {

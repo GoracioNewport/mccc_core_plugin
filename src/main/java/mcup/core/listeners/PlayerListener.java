@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class PlayerListener implements Listener {
 
@@ -25,7 +26,12 @@ public class PlayerListener implements Listener {
     if (playerTeam != null)
       plugin.permissionManager.assignPlayerToTeam(event.getPlayer().getName());
 
-    plugin.offlinePlayerScheduler.checkPlayerSchedule(event.getPlayer());
+    plugin.offlinePlayerScheduler.checkPlayerJoinSchedule(event.getPlayer());
+  }
+
+  @EventHandler
+  public void onPlayerRespawn(PlayerRespawnEvent event) {
+    plugin.offlinePlayerScheduler.checkPlayerRespawnSchedule(event.getPlayer());
   }
 
   @EventHandler
