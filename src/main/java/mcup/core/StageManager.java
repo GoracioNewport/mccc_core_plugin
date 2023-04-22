@@ -96,6 +96,12 @@ public class StageManager {
     return stages.get(currentStageIndex);
   }
 
+  public void tickHop(int ticks) {
+    if (currentStageIndex >= stages.size())
+      return;
+
+    stages.get(currentStageIndex).timeElapsed += ticks;
+  }
 
   private final JavaPlugin plugin;
   private final Core core;

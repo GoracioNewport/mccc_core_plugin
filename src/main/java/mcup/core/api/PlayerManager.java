@@ -138,6 +138,11 @@ public class PlayerManager {
     plugin.offlinePlayerScheduler.scheduledSpawnPoint.remove(playerName);
   }
 
+  public void teleportToSpawnPoint(String playerName) {
+    if (plugin.offlinePlayerScheduler.scheduledSpawnPoint.containsKey(playerName))
+      playerTeleport(plugin.offlinePlayerScheduler.scheduledLocation.get(playerName), playerName);
+  }
+
   // Inventory management
 
   public void clearPlayerInventory(String playerName) {

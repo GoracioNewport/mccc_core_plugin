@@ -120,6 +120,13 @@ public class AdminCommands implements CommandExecutor {
 
       if (Objects.equals(args[1], "current"))
         sender.sendMessage(plugin.stageManager.getCurrentStage().toString());
+
+      if (Objects.equals(args[1], "hop")) {
+        if (args.length == 2)
+          return false;
+
+        plugin.stageManager.tickHop(Integer.parseInt(args[2]));
+      }
     }
 
     if (Objects.equals(args[0], "debug")) {
