@@ -3,7 +3,11 @@ package mcup.core;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -40,6 +44,18 @@ public class NBTManager {
 
     return nbtItem.getItem();
   }
+
+  public static ItemStack addEnchantmentGlint(ItemStack item) {
+    // enchantment is technically a NBT, right?
+    item.addEnchantment((item.getType() == Material.BOW) ? Enchantment.PROTECTION_ENVIRONMENTAL : Enchantment.ARROW_INFINITE, 1);
+
+    final ItemMeta meta = item.getItemMeta();
+    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+    item.setItemMeta(meta);
+
+    return item;
+  }
+
 
   public static boolean checkTag(ItemStack item, String tag, String tagValue) {
 
