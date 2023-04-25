@@ -3,23 +3,20 @@ package mcup.core.api;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import mcup.core.ColorConverter;
 import mcup.core.Core;
 import mcup.core.local.data.Player;
 import mcup.core.local.data.Team;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 
 public class PlayerManager {
@@ -151,6 +148,33 @@ public class PlayerManager {
 
     for (String targetName : targets)
       addGlowPlayerBoolean(observerName, targetName, false);
+  }
+
+  public void removeAllGlowPlayers() {
+    HashMap<String, HashSet<String>> targets = plugin.offlinePlayerScheduler.scheduledGlow;
+    plugin.offlinePlayerScheduler.scheduledGlow.clear();
+
+    for (String observerName : targets.keySet())
+      removeGlowPlayer(observerName);
+  }
+
+  // Effects
+
+  public void playFireworkEffect(org.bukkit.entity.Player player, int power) {
+
+    Firework firework = (Firework) player.getWorld().spawnEntity(player.getEyeLocation(), EntityType.FIREWORK);
+    FireworkMeta fireworkMeta = firework.getFireworkMeta();
+
+    Team playerTeam = plugin.apiManager.teamManager.getTeamByPlayer(player.getName());
+
+    Color fireworkColor = (playerTeam == null ? Color.WHITE : ColorConverter.translateCharToColor(playerTeam.color.charAt(1)));
+
+    fireworkMeta.setPower(power);
+
+    fireworkMeta.addEffect(FireworkEffect.builder().withColor(fireworkColor).build());
+    firework.setFireworkMeta(fireworkMeta);
+
+    firework.detonate();
   }
 
   // Sound management
