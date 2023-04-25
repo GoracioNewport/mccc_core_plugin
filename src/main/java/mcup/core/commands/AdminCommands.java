@@ -153,6 +153,12 @@ public class AdminCommands implements CommandExecutor {
 
 
       }
+
+      if (Objects.equals(args[1], "firework") && sender instanceof Player) {
+
+        plugin.apiManager.playerManager.playFireworkEffect((Player)sender);
+
+      }
     }
 
     return true;

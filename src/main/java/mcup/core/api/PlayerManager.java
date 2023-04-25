@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
@@ -160,7 +161,7 @@ public class PlayerManager {
 
   // Effects
 
-  public void playFireworkEffect(org.bukkit.entity.Player player, int power) {
+  public void playFireworkEffect(org.bukkit.entity.Player player) {
 
     Firework firework = (Firework) player.getWorld().spawnEntity(player.getEyeLocation(), EntityType.FIREWORK);
     FireworkMeta fireworkMeta = firework.getFireworkMeta();
@@ -169,10 +170,9 @@ public class PlayerManager {
 
     Color fireworkColor = (playerTeam == null ? Color.WHITE : ColorConverter.translateCharToColor(playerTeam.color.charAt(1)));
 
-    fireworkMeta.setPower(power);
-
     fireworkMeta.addEffect(FireworkEffect.builder().withColor(fireworkColor).build());
     firework.setFireworkMeta(fireworkMeta);
+    firework.setMetadata("harmless", new FixedMetadataValue(plugin, true));
 
     firework.detonate();
   }
