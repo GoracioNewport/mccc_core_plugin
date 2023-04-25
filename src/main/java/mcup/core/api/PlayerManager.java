@@ -1,5 +1,11 @@
 package mcup.core.api;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import mcup.core.Core;
 import mcup.core.local.data.Player;
 import mcup.core.local.data.Team;
@@ -12,6 +18,8 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 
 public class PlayerManager {
@@ -83,6 +91,66 @@ public class PlayerManager {
     for (Player player : team.players)
       playerTeleport(location, player.nickname);
 
+  }
+
+  // Glow management
+
+  private void addGlowPlayerBoolean(String observerName, String targetName, boolean bit) {
+    org.bukkit.entity.Player bukkitObserver = Bukkit.getPlayer(observerName);
+    org.bukkit.entity.Player bukkitTarget = Bukkit.getPlayer(targetName);
+    if (bukkitObserver == null || bukkitTarget == null)
+      return;
+
+    PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
+    packet.getIntegers().write(0, bukkitTarget.getEntityId());
+
+    byte mask = 0;
+
+    // Holy shit this is so F U N
+
+    if (bukkitTarget.isVisualFire())
+      mask |= 0x01;
+    if (bukkitTarget.isSneaking())
+      mask |= 0x02;
+    if (bukkitTarget.isSprinting())
+      mask |= 0x08;
+    if (bukkitTarget.isSwimming())
+      mask |= 0x10;
+    if (bukkitTarget.isInvisible())
+      mask |= 0x20;
+    if (bit)
+      mask |= 0x40;
+    if (bukkitTarget.isGliding())
+      mask |= 0x80;
+
+    List<WrappedDataValue> values = new ArrayList<>();
+    values.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), mask));
+
+    packet.getDataValueCollectionModifier().write(0, values);
+
+
+    try {
+      ProtocolLibrary.getProtocolManager().sendServerPacket(bukkitObserver, packet);
+    } catch (Exception e) {
+      e.printStackTrace();
+      plugin.getLogger().warning("Uh-oh, something is wrong with Glow packet... Not stepping into that shit again!");
+    }
+  }
+
+  public void addGlowPlayer(String observerName, String targetName) {
+    plugin.offlinePlayerScheduler.addGlow(observerName, targetName);
+    addGlowPlayerBoolean(observerName, targetName, true);
+  }
+
+  public void removeGlowPlayer(String observerName) {
+    if (!plugin.offlinePlayerScheduler.scheduledGlow.containsKey(observerName))
+      return;
+
+    HashSet<String> targets = plugin.offlinePlayerScheduler.scheduledGlow.get(observerName);
+    plugin.offlinePlayerScheduler.removeGlow(observerName);
+
+    for (String targetName : targets)
+      addGlowPlayerBoolean(observerName, targetName, false);
   }
 
   // Sound management

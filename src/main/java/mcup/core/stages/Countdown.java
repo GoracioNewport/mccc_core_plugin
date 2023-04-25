@@ -128,6 +128,48 @@ public class Countdown extends GamemodeStage {
     }
   }
 
+  public void buildCage(Material fill, int locationIndex) {
+    Location location = spawnLocations.get(locationIndex);
+    Location anchor = location.clone().add(0, 1, 0);
+
+    int radius = spawnOffset + 1;
+
+    for (int i = -radius - 1; i <= radius + 1; i++) {
+      anchor.clone().add(i, 0, -radius - 1).getBlock().setType(fill);
+      anchor.clone().add(i, 0, radius + 1).getBlock().setType(fill);
+      anchor.clone().add(-radius - 1, 0, i).getBlock().setType(fill);
+      anchor.clone().add(radius + 1, 0, i).getBlock().setType(fill);
+    }
+  }
+
+  protected void buildWall(Material deletion, Material replacement, Location centerLocation, int centerRadius, int centerHeight) {
+
+    Location anchor1 = centerLocation.clone().add(centerRadius, 0, centerRadius);
+    Location anchor2 = centerLocation.clone().add(centerRadius, 0, -centerRadius);
+    Location anchor3 = centerLocation.clone().add(-centerRadius, 0, -centerRadius);
+    Location anchor4 = centerLocation.clone().add(-centerRadius, 0, centerRadius);
+
+    for (int i = 0; i < 2 * centerRadius + 1; i++) {
+      for (int j = 0; j < centerHeight; j++) {
+        replaceBlock(anchor1.clone().add(0, j, 0), deletion, replacement);
+        replaceBlock(anchor2.clone().add(0, j, 0), deletion, replacement);
+        replaceBlock(anchor3.clone().add(0, j, 0), deletion, replacement);
+        replaceBlock(anchor4.clone().add(0, j, 0), deletion, replacement);
+      }
+
+      anchor1.add(0, 0, -1);
+      anchor2.add(-1, 0, 0);
+      anchor3.add(0, 0, 1);
+      anchor4.add(1, 0, 0);
+    }
+  }
+
+  protected void replaceBlock(Location location, Material deletion, Material replacement) {
+    if (location.getBlock().getType() == deletion)
+      location.getBlock().setType(replacement);
+  }
+
+
   public void spawnPlayers() {
 
     int locationIndex = 0;
@@ -164,7 +206,7 @@ public class Countdown extends GamemodeStage {
       spawnLocations.add(location);
     }
 
-    Collections.shuffle(spawnLocations);
+    // Collections.shuffle(spawnLocations);
   }
 
   public Countdown(Core core_, JavaPlugin plugin_) {

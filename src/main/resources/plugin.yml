@@ -4,7 +4,7 @@ main: mcup.core.Core
 api-version: 1.18
 authors: [ GoracioNewport ]
 description: Core plugin for basic functions handling
-depend: [ PlaceholderAPI, LuckPerms ]
+depend: [ PlaceholderAPI, LuckPerms, ProtocolLib ]
 commands:
   core:
-    description: Admin tool for managing MCCC core
+    description: Admin tool for managing MCup core

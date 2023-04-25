@@ -23,8 +23,12 @@ public class PlayerListener implements Listener {
       return;
     }
 
-    if (playerTeam != null)
-      plugin.permissionManager.assignPlayerToTeam(event.getPlayer().getName());
+    if (playerTeam != null) {
+      org.bukkit.scoreboard.Team legacyTeam = plugin.scoreboardManager.tabBoard.getTeam(playerTeam.name);
+      if (legacyTeam != null)
+        legacyTeam.addEntry(event.getPlayer().getName());
+    }
+
 
     plugin.offlinePlayerScheduler.checkPlayerJoinSchedule(event.getPlayer());
   }

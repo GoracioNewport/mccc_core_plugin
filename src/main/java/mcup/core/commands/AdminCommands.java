@@ -140,8 +140,20 @@ public class AdminCommands implements CommandExecutor {
 
         sender.sendMessage("Location written to default config file");
       }
+
+      if (Objects.equals(args[1], "glow")) {
+
+        String option = args[2];
+
+        if (option.equals("add"))
+          plugin.apiManager.playerManager.addGlowPlayer(args[3], args[4]);
+        else if (option.equals("remove"))
+          plugin.apiManager.playerManager.removeGlowPlayer(args[3]);
+
+      }
     }
 
+    sender.sendMessage("Wrong syntax!");
     return true;
   }
 
