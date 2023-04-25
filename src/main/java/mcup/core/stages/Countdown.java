@@ -169,28 +169,35 @@ public class Countdown extends GamemodeStage {
       location.getBlock().setType(replacement);
   }
 
+  public void spawnTeam(Team team, Location location) {
+
+    Location teamLocation = location.clone();
+    ArrayList <mcup.core.local.data.Player> shuffledPlayers = (ArrayList<mcup.core.local.data.Player>) team.players.clone();
+    Collections.shuffle(shuffledPlayers);
+
+
+    for (int i = 0; i < team.players.size(); i++) {
+      int offsetX = (int)Math.pow(-1, i / 2) * spawnOffset;
+      int offsetZ = (int)Math.pow(-1, i % 2) * spawnOffset;
+
+      Location playerLocation = teamLocation.clone().add(offsetX, 0, offsetZ);
+
+      mcup.core.local.data.Player teamPlayer = shuffledPlayers.get(i);
+      core.apiManager.playerManager.playerTeleport(playerLocation, teamPlayer.nickname);
+    }
+  }
 
   public void spawnPlayers() {
 
-    int locationIndex = 0;
-    for (Team team : core.apiManager.teamManager.getTeams().values()) {
+    ArrayList<Team> teams = new ArrayList<>(core.apiManager.teamManager.getTeams().values());
+    Collections.shuffle(teams);
 
-      Location teamLocation = spawnLocations.get(locationIndex).clone();
-      ArrayList< mcup.core.local.data.Player> shuffledPlayers = (ArrayList<mcup.core.local.data.Player>) team.players.clone();
-      Collections.shuffle(shuffledPlayers);
-
-
-      for (int i = 0; i < team.players.size(); i++) {
-        int offsetX = (int)Math.pow(-1, i / 2) * spawnOffset;
-        int offsetZ = (int)Math.pow(-1, i % 2) * spawnOffset;
-
-        Location playerLocation = teamLocation.clone().add(offsetX, 0, offsetZ);
-
-        mcup.core.local.data.Player teamPlayer = shuffledPlayers.get(i);
-        core.apiManager.playerManager.playerTeleport(playerLocation, teamPlayer.nickname);
+    for (int i = 0; i < teams.size(); i++) {
+      if (i >= spawnLocations.size()) {
+        plugin.getLogger().warning("Not enough spawn locations in config.yml!");
       }
 
-      locationIndex++;
+      spawnTeam(teams.get(i), spawnLocations.get(i % spawnLocations.size()));
     }
 
   }

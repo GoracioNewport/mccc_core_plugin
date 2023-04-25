@@ -1,6 +1,7 @@
 package mcup.core.commands;
 
 import mcup.core.Core;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -138,7 +139,7 @@ public class AdminCommands implements CommandExecutor {
         plugin.getConfig().set("debug.location", ((Player) sender).getLocation());
         plugin.saveConfig();
 
-        sender.sendMessage("Location written to default config file");
+        sender.sendMessage(ChatColor.GREEN + "Location written to default config file");
       }
 
       if (Objects.equals(args[1], "glow")) {
@@ -150,10 +151,10 @@ public class AdminCommands implements CommandExecutor {
         else if (option.equals("remove"))
           plugin.apiManager.playerManager.removeGlowPlayer(args[3]);
 
+
       }
     }
 
-    sender.sendMessage("Wrong syntax!");
     return true;
   }
 
