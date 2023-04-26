@@ -158,4 +158,12 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>mcup</id>
+            <name>MCup</name>
+            <url>https://mymavenrepo.com/repo/koeiSavoE6S9GF3jI4Yp/</url>
+        </repository>
+    </distributionManagement>
 </project>
