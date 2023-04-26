@@ -19,7 +19,6 @@ public class OfflinePlayerScheduler {
   public HashMap <String, ArrayList<ItemStack>> scheduledItems = new HashMap<>();
   public HashMap <String, ArrayList<PotionEffect>> scheduledEffects = new HashMap<>();
   public HashMap <String, Location> scheduledSpawnPoint = new HashMap<>();
-
   public HashMap <String, HashSet<String>> scheduledGlow = new HashMap<>();
 
   public void checkPlayerJoinSchedule(Player player) {
@@ -81,8 +80,15 @@ public class OfflinePlayerScheduler {
     return false;
   }
 
-  public void removeGlow(String observer) {
+  public void removeAllGlow(String observer) {
     scheduledGlow.remove(observer);
+  }
+
+  public void removeGlow(String observer, String target) {
+    if (!scheduledGlow.containsKey(observer))
+      return;
+
+    scheduledGlow.get(observer).remove(target);
   }
 
 

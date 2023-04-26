@@ -149,7 +149,7 @@ public class AdminCommands implements CommandExecutor {
         if (option.equals("add"))
           plugin.apiManager.playerManager.addGlowPlayer(args[3], args[4]);
         else if (option.equals("remove"))
-          plugin.apiManager.playerManager.removeGlowPlayer(args[3]);
+          plugin.apiManager.playerManager.removeGlowPlayers(args[3]);
 
 
       }

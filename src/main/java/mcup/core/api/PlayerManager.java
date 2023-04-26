@@ -140,23 +140,31 @@ public class PlayerManager {
     addGlowPlayerBoolean(observerName, targetName, true);
   }
 
-  public void removeGlowPlayer(String observerName) {
+  public void removeGlowPlayers(String observerName) {
     if (!plugin.offlinePlayerScheduler.scheduledGlow.containsKey(observerName))
       return;
 
     HashSet<String> targets = plugin.offlinePlayerScheduler.scheduledGlow.get(observerName);
-    plugin.offlinePlayerScheduler.removeGlow(observerName);
+    plugin.offlinePlayerScheduler.removeAllGlow(observerName);
 
     for (String targetName : targets)
       addGlowPlayerBoolean(observerName, targetName, false);
   }
 
-  public void removeAllGlowPlayers() {
+  public void removeGlowPlayer(String oberserName, String targetName) {
+    if (!plugin.offlinePlayerScheduler.scheduledGlow.containsKey(oberserName))
+      return;
+
+    plugin.offlinePlayerScheduler.removeGlow(oberserName, targetName);
+    addGlowPlayerBoolean(oberserName, targetName, false);
+  }
+
+  public void resetGlowing() {
     HashMap<String, HashSet<String>> targets = plugin.offlinePlayerScheduler.scheduledGlow;
     plugin.offlinePlayerScheduler.scheduledGlow.clear();
 
     for (String observerName : targets.keySet())
-      removeGlowPlayer(observerName);
+      removeGlowPlayers(observerName);
   }
 
   // Effects
@@ -204,6 +212,16 @@ public class PlayerManager {
     for (org.bukkit.entity.Player player : target)
       player.sendTitle(title, subTitle, fadeIn, stay, fadeOut);
 
+  }
+
+  public void sendKillTitle(org.bukkit.entity.Player player, String target) {
+    Team playerTeam = plugin.apiManager.teamManager.getTeamByPlayer(player.getName());
+    Team targetTeam = plugin.apiManager.teamManager.getTeamByPlayer(target);
+
+    if (playerTeam == null || targetTeam == null)
+      return;
+
+    player.sendTitle("[" + playerTeam.color + "⚔" + ChatColor.RESET + "] " + targetTeam.color + target, "", 3, 20, 7);
   }
 
   public void sendTeamTitle(String  title, String subTitle, int fadeIn, int stay, int fadeOut, Team team) {
