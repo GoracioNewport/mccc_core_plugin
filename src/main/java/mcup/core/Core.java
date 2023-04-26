@@ -1,7 +1,12 @@
 package mcup.core;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
 import mcup.core.commands.AdminCommands;
 import mcup.core.listeners.GamemodeListener;
+import mcup.core.listeners.PacketListener;
 import mcup.core.listeners.PlayerListener;
 import mcup.core.local.Repository;
 import mcup.core.placeholders.CoreExpansion;
@@ -18,6 +23,10 @@ public final class Core extends JavaPlugin {
 
   public CoreExpansion placeholderManager;
   public PermissionManager permissionManager;
+
+  public ScoreboardManager scoreboardManager;
+
+  public ProtocolManager protocolManager;
   public BukkitAudiences adventureApi;
 
   public OfflinePlayerScheduler offlinePlayerScheduler;
@@ -41,15 +50,22 @@ public final class Core extends JavaPlugin {
     repository = new Repository(this);
     repository.fetch();
 
-    // LuckPerms initialization
-    permissionManager = new PermissionManager(this);
-
-
     // API initialization
     apiManager = new ApiManager(this);
     apiManager.teamManager.assignColors();
     adventureApi = BukkitAudiences.create(this);
     offlinePlayerScheduler = new OfflinePlayerScheduler(this);
+
+    scoreboardManager = new ScoreboardManager(this);
+    scoreboardManager.initTeams();
+
+    // LuckPerms initialization
+    permissionManager = new PermissionManager(this);
+
+
+    // ProtocolLib initialization
+    protocolManager = ProtocolLibrary.getProtocolManager();
+    protocolManager.addPacketListener(new PacketListener(this, PacketType.Play.Server.ENTITY_METADATA));
 
 
     // Placeholders initialization

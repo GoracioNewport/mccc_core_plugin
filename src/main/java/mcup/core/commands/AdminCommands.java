@@ -1,6 +1,7 @@
 package mcup.core.commands;
 
 import mcup.core.Core;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -120,6 +121,13 @@ public class AdminCommands implements CommandExecutor {
 
       if (Objects.equals(args[1], "current"))
         sender.sendMessage(plugin.stageManager.getCurrentStage().toString());
+
+      if (Objects.equals(args[1], "hop")) {
+        if (args.length == 2)
+          return false;
+
+        plugin.stageManager.tickHop(Integer.parseInt(args[2]));
+      }
     }
 
     if (Objects.equals(args[0], "debug")) {
@@ -131,7 +139,25 @@ public class AdminCommands implements CommandExecutor {
         plugin.getConfig().set("debug.location", ((Player) sender).getLocation());
         plugin.saveConfig();
 
-        sender.sendMessage("Location written to default config file");
+        sender.sendMessage(ChatColor.GREEN + "Location written to default config file");
+      }
+
+      if (Objects.equals(args[1], "glow")) {
+
+        String option = args[2];
+
+        if (option.equals("add"))
+          plugin.apiManager.playerManager.addGlowPlayer(args[3], args[4]);
+        else if (option.equals("remove"))
+          plugin.apiManager.playerManager.removeGlowPlayer(args[3]);
+
+
+      }
+
+      if (Objects.equals(args[1], "firework") && sender instanceof Player) {
+
+        plugin.apiManager.playerManager.playFireworkEffect((Player)sender);
+
       }
     }
 

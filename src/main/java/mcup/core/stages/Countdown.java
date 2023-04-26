@@ -128,27 +128,76 @@ public class Countdown extends GamemodeStage {
     }
   }
 
-  public void spawnPlayers() {
+  public void buildCage(Material fill, int locationIndex) {
+    Location location = spawnLocations.get(locationIndex);
+    Location anchor = location.clone().add(0, 1, 0);
 
-    int locationIndex = 0;
-    for (Team team : core.apiManager.teamManager.getTeams().values()) {
+    int radius = spawnOffset + 1;
 
-      Location teamLocation = spawnLocations.get(locationIndex).clone();
-      ArrayList< mcup.core.local.data.Player> shuffledPlayers = (ArrayList<mcup.core.local.data.Player>) team.players.clone();
-      Collections.shuffle(shuffledPlayers);
+    for (int i = -radius - 1; i <= radius + 1; i++) {
+      anchor.clone().add(i, 0, -radius - 1).getBlock().setType(fill);
+      anchor.clone().add(i, 0, radius + 1).getBlock().setType(fill);
+      anchor.clone().add(-radius - 1, 0, i).getBlock().setType(fill);
+      anchor.clone().add(radius + 1, 0, i).getBlock().setType(fill);
+    }
+  }
 
+  protected void buildWall(Material deletion, Material replacement, Location centerLocation, int centerRadius, int centerHeight) {
 
-      for (int i = 0; i < team.players.size(); i++) {
-        int offsetX = (int)Math.pow(-1, i / 2) * spawnOffset;
-        int offsetZ = (int)Math.pow(-1, i % 2) * spawnOffset;
+    Location anchor1 = centerLocation.clone().add(centerRadius, 0, centerRadius);
+    Location anchor2 = centerLocation.clone().add(centerRadius, 0, -centerRadius);
+    Location anchor3 = centerLocation.clone().add(-centerRadius, 0, -centerRadius);
+    Location anchor4 = centerLocation.clone().add(-centerRadius, 0, centerRadius);
 
-        Location playerLocation = teamLocation.clone().add(offsetX, 0, offsetZ);
-
-        mcup.core.local.data.Player teamPlayer = shuffledPlayers.get(i);
-        core.apiManager.playerManager.playerTeleport(playerLocation, teamPlayer.nickname);
+    for (int i = 0; i < 2 * centerRadius + 1; i++) {
+      for (int j = 0; j < centerHeight; j++) {
+        replaceBlock(anchor1.clone().add(0, j, 0), deletion, replacement);
+        replaceBlock(anchor2.clone().add(0, j, 0), deletion, replacement);
+        replaceBlock(anchor3.clone().add(0, j, 0), deletion, replacement);
+        replaceBlock(anchor4.clone().add(0, j, 0), deletion, replacement);
       }
 
-      locationIndex++;
+      anchor1.add(0, 0, -1);
+      anchor2.add(-1, 0, 0);
+      anchor3.add(0, 0, 1);
+      anchor4.add(1, 0, 0);
+    }
+  }
+
+  protected void replaceBlock(Location location, Material deletion, Material replacement) {
+    if (location.getBlock().getType() == deletion)
+      location.getBlock().setType(replacement);
+  }
+
+  public void spawnTeam(Team team, Location location) {
+
+    Location teamLocation = location.clone();
+    ArrayList <mcup.core.local.data.Player> shuffledPlayers = (ArrayList<mcup.core.local.data.Player>) team.players.clone();
+    Collections.shuffle(shuffledPlayers);
+
+
+    for (int i = 0; i < team.players.size(); i++) {
+      int offsetX = (int)Math.pow(-1, i / 2) * spawnOffset;
+      int offsetZ = (int)Math.pow(-1, i % 2) * spawnOffset;
+
+      Location playerLocation = teamLocation.clone().add(offsetX, 0, offsetZ);
+
+      mcup.core.local.data.Player teamPlayer = shuffledPlayers.get(i);
+      core.apiManager.playerManager.playerTeleport(playerLocation, teamPlayer.nickname);
+    }
+  }
+
+  public void spawnPlayers() {
+
+    ArrayList<Team> teams = new ArrayList<>(core.apiManager.teamManager.getTeams().values());
+    Collections.shuffle(teams);
+
+    for (int i = 0; i < teams.size(); i++) {
+      if (i >= spawnLocations.size()) {
+        plugin.getLogger().warning("Not enough spawn locations in config.yml!");
+      }
+
+      spawnTeam(teams.get(i), spawnLocations.get(i % spawnLocations.size()));
     }
 
   }
@@ -164,7 +213,7 @@ public class Countdown extends GamemodeStage {
       spawnLocations.add(location);
     }
 
-    Collections.shuffle(spawnLocations);
+    // Collections.shuffle(spawnLocations);
   }
 
   public Countdown(Core core_, JavaPlugin plugin_) {

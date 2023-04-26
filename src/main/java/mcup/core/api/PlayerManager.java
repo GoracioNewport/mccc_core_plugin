@@ -1,17 +1,23 @@
 package mcup.core.api;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import mcup.core.ColorConverter;
 import mcup.core.Core;
 import mcup.core.local.data.Player;
 import mcup.core.local.data.Team;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 
 public class PlayerManager {
@@ -85,6 +91,92 @@ public class PlayerManager {
 
   }
 
+  // Glow management
+
+  private void addGlowPlayerBoolean(String observerName, String targetName, boolean bit) {
+    org.bukkit.entity.Player bukkitObserver = Bukkit.getPlayer(observerName);
+    org.bukkit.entity.Player bukkitTarget = Bukkit.getPlayer(targetName);
+    if (bukkitObserver == null || bukkitTarget == null)
+      return;
+
+    PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
+    packet.getIntegers().write(0, bukkitTarget.getEntityId());
+
+    byte mask = 0;
+
+    // Holy shit this is so F U N
+
+    if (bukkitTarget.isVisualFire())
+      mask |= 0x01;
+    if (bukkitTarget.isSneaking())
+      mask |= 0x02;
+    if (bukkitTarget.isSprinting())
+      mask |= 0x08;
+    if (bukkitTarget.isSwimming())
+      mask |= 0x10;
+    if (bukkitTarget.isInvisible())
+      mask |= 0x20;
+    if (bit)
+      mask |= 0x40;
+    if (bukkitTarget.isGliding())
+      mask |= 0x80;
+
+    List<WrappedDataValue> values = new ArrayList<>();
+    values.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), mask));
+
+    packet.getDataValueCollectionModifier().write(0, values);
+
+
+    try {
+      ProtocolLibrary.getProtocolManager().sendServerPacket(bukkitObserver, packet);
+    } catch (Exception e) {
+      e.printStackTrace();
+      plugin.getLogger().warning("Uh-oh, something is wrong with Glow packet... Not stepping into that shit again!");
+    }
+  }
+
+  public void addGlowPlayer(String observerName, String targetName) {
+    plugin.offlinePlayerScheduler.addGlow(observerName, targetName);
+    addGlowPlayerBoolean(observerName, targetName, true);
+  }
+
+  public void removeGlowPlayer(String observerName) {
+    if (!plugin.offlinePlayerScheduler.scheduledGlow.containsKey(observerName))
+      return;
+
+    HashSet<String> targets = plugin.offlinePlayerScheduler.scheduledGlow.get(observerName);
+    plugin.offlinePlayerScheduler.removeGlow(observerName);
+
+    for (String targetName : targets)
+      addGlowPlayerBoolean(observerName, targetName, false);
+  }
+
+  public void removeAllGlowPlayers() {
+    HashMap<String, HashSet<String>> targets = plugin.offlinePlayerScheduler.scheduledGlow;
+    plugin.offlinePlayerScheduler.scheduledGlow.clear();
+
+    for (String observerName : targets.keySet())
+      removeGlowPlayer(observerName);
+  }
+
+  // Effects
+
+  public void playFireworkEffect(org.bukkit.entity.Player player) {
+
+    Firework firework = (Firework) player.getWorld().spawnEntity(player.getEyeLocation(), EntityType.FIREWORK);
+    FireworkMeta fireworkMeta = firework.getFireworkMeta();
+
+    Team playerTeam = plugin.apiManager.teamManager.getTeamByPlayer(player.getName());
+
+    Color fireworkColor = (playerTeam == null ? Color.WHITE : ColorConverter.translateCharToColor(playerTeam.color.charAt(1)));
+
+    fireworkMeta.addEffect(FireworkEffect.builder().withColor(fireworkColor).build());
+    firework.setFireworkMeta(fireworkMeta);
+    firework.setMetadata("harmless", new FixedMetadataValue(plugin, true));
+
+    firework.detonate();
+  }
+
   // Sound management
 
   public void playSound(Sound sound, float pitch, Collection<? extends org.bukkit.entity.Player> target) {
@@ -126,6 +218,21 @@ public class PlayerManager {
 
     sendTitle(title, subTitle, fadeIn, stay, fadeOut, target);
 
+  }
+
+  // SpawnPoint management
+
+  public void setPlayerSpawnPoint(Location location, String playerName) {
+    plugin.offlinePlayerScheduler.scheduledSpawnPoint.put(playerName, location);
+  }
+
+  public void resetPlayerSpawnPoint(String playerName) {
+    plugin.offlinePlayerScheduler.scheduledSpawnPoint.remove(playerName);
+  }
+
+  public void teleportToSpawnPoint(String playerName) {
+    if (plugin.offlinePlayerScheduler.scheduledSpawnPoint.containsKey(playerName))
+      playerTeleport(plugin.offlinePlayerScheduler.scheduledLocation.get(playerName), playerName);
   }
 
   // Inventory management

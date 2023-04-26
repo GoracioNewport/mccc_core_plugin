@@ -3,10 +3,13 @@ package mcup.core.listeners;
 import mcup.core.Core;
 import mcup.core.local.data.Team;
 import mcup.core.stages.Cutscene;
+import org.bukkit.entity.Firework;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class PlayerListener implements Listener {
 
@@ -22,16 +25,35 @@ public class PlayerListener implements Listener {
       return;
     }
 
-    if (playerTeam != null)
-      plugin.permissionManager.assignPlayerToTeam(event.getPlayer().getName());
+    if (playerTeam != null) {
+      org.bukkit.scoreboard.Team legacyTeam = plugin.scoreboardManager.tabBoard.getTeam(playerTeam.name);
+      if (legacyTeam != null)
+        legacyTeam.addEntry(event.getPlayer().getName());
+    }
 
-    plugin.offlinePlayerScheduler.checkPlayerSchedule(event.getPlayer());
+
+    plugin.offlinePlayerScheduler.checkPlayerJoinSchedule(event.getPlayer());
+  }
+
+  @EventHandler
+  public void onPlayerRespawn(PlayerRespawnEvent event) {
+    plugin.offlinePlayerScheduler.checkPlayerRespawnSchedule(event.getPlayer());
   }
 
   @EventHandler
   public void onPlayerMove(PlayerMoveEvent event) {
     if (plugin.stageManager.getCurrentStage() instanceof Cutscene) {
       event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onPlayerDamaged(EntityDamageByEntityEvent event) {
+    if (event.getDamager() instanceof Firework) {
+      Firework firework = (Firework) event.getDamager();
+      if (firework.hasMetadata("harmless")) {
+        event.setCancelled(true);
+      }
     }
   }
 

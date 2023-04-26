@@ -8,7 +8,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class OfflinePlayerScheduler {
 
@@ -16,8 +18,11 @@ public class OfflinePlayerScheduler {
   public HashMap<String, GameMode> scheduledGamemode = new HashMap<>();
   public HashMap <String, ArrayList<ItemStack>> scheduledItems = new HashMap<>();
   public HashMap <String, ArrayList<PotionEffect>> scheduledEffects = new HashMap<>();
+  public HashMap <String, Location> scheduledSpawnPoint = new HashMap<>();
 
-  public void checkPlayerSchedule(Player player) {
+  public HashMap <String, HashSet<String>> scheduledGlow = new HashMap<>();
+
+  public void checkPlayerJoinSchedule(Player player) {
 
     String playerName = player.getName();
 
@@ -37,6 +42,8 @@ public class OfflinePlayerScheduler {
       else
         for (ItemStack itemStack : scheduledItems.get(playerName))
           player.getInventory().addItem(itemStack);
+
+      scheduledItems.remove(playerName);
     }
 
     if (scheduledEffects.containsKey(playerName)) {
@@ -45,15 +52,47 @@ public class OfflinePlayerScheduler {
           player.removePotionEffect(potionEffect.getType());
       else
         player.addPotionEffects(scheduledEffects.get(playerName));
+
+      scheduledEffects.remove(playerName);
     }
 
   }
+
+  public void checkPlayerRespawnSchedule(Player player) {
+
+    String playerName = player.getName();
+
+    if (scheduledSpawnPoint.containsKey(playerName))
+      player.teleport(scheduledSpawnPoint.get(playerName));
+
+  }
+
+  public void addGlow(String observer, String target) {
+    if (scheduledGlow.containsKey(observer))
+      scheduledGlow.get(observer).add(target);
+    else
+      scheduledGlow.put(observer, new HashSet<>(Collections.singleton(target)));
+  }
+
+  public boolean checkGlow(String observer, String target) {
+    if (scheduledGlow.containsKey(observer))
+      return scheduledGlow.get(observer).contains(target);
+
+    return false;
+  }
+
+  public void removeGlow(String observer) {
+    scheduledGlow.remove(observer);
+  }
+
 
   public void clear() {
     scheduledLocation.clear();
     scheduledGamemode.clear();
     scheduledItems.clear();
     scheduledEffects.clear();
+    scheduledSpawnPoint.clear();
+    scheduledGlow.clear();
   }
   private final JavaPlugin plugin;
   public OfflinePlayerScheduler(JavaPlugin plugin_) {
